@@ -72,31 +72,44 @@ function cssPxPerMm() {
   return px > 0.5 ? px : 96 / 25.4;
 }
 
-/**
- * CSS `mm` na telefonie to fikcja 96 px/cal. iOS liczymy jako 163 CSS px/cal
- * (także iPad udający Maca), Android jako 160. Desktop: zmierzony mm.
- * Pinch-zoom korygujemy tylko na ścieżce mobilnej.
- */
-function glassCssPx() {
+function isPhone() {
   const ua = navigator.userAgent || "";
   const touch = navigator.maxTouchPoints > 0;
   const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && touch);
-  const android = /Android/i.test(ua);
-  const mobile = ios || android;
-  const pxPerMm = ios ? 163 / 25.4 : android ? 160 / 25.4 : cssPxPerMm();
+  return ios || /Android/i.test(ua);
+}
+
+/**
+ * Na telefonie szkło ma prawdziwe 0.96". CSS `mm` tam kłamie (96 px/cal),
+ * więc iOS liczymy jako 163, Android jako 160. Na komputerze ekran jest
+ * powiększony całkowitoliczbowo, bo 22×11 mm ledwo widać.
+ */
+function glassCssPx() {
+  const phone = isPhone();
+  const ua = navigator.userAgent || "";
+  const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 0);
+  const pxPerMm = ios ? 163 / 25.4 : phone ? 160 / 25.4 : cssPxPerMm();
   const vv = window.visualViewport;
-  const zoom = mobile && vv && vv.scale > 0 ? vv.scale : 1;
-  return {
-    w: (GLASS_W_MM * pxPerMm) / zoom,
-    h: (GLASS_H_MM * pxPerMm) / zoom,
-  };
+  const zoom = phone && vv && vv.scale > 0 ? vv.scale : 1;
+  const w = (GLASS_W_MM * pxPerMm) / zoom;
+  const h = (GLASS_H_MM * pxPerMm) / zoom;
+  if (phone) return { w, h, zoom: 1, life: true };
+  const stage = document.querySelector(".stage");
+  const stageW = stage ? stage.clientWidth : window.innerWidth;
+  const side = window.innerWidth < 980 ? 72 : 220;
+  const availW = Math.max(128, stageW - side);
+  const availH = Math.max(160, window.innerHeight - 140);
+  let s = Math.floor(Math.min(availW / 128, availH / 64));
+  if (s < 4) s = 4;
+  if (s > 6) s = 6;
+  return { w: 128 * s, h: 64 * s, zoom: s, life: false };
 }
 
 function backingFor(cssW) {
   const dpr = window.devicePixelRatio || 1;
-  let k = Math.ceil((cssW * dpr) / 128 - 1e-6);
+  let k = Math.round((cssW * dpr) / 128);
   if (k < 1) k = 1;
-  if (k > 4) k = 4;
+  if (k > 8) k = 8;
   return k;
 }
 
@@ -104,14 +117,16 @@ function applyScale() {
   glass = glassCssPx();
   scale = backingFor(glass.w);
   const root = document.documentElement;
+  const btn = glass.life ? 44 : Math.max(44, Math.min(60, Math.round((glass.h - 24) / 4)));
   root.style.setProperty("--screen-w", glass.w.toFixed(2) + "px");
   root.style.setProperty("--screen-h", glass.h.toFixed(2) + "px");
-  root.style.setProperty("--btn", "44px");
+  root.style.setProperty("--btn", btn + "px");
   root.style.setProperty("--btn-gap", "8px");
   const read = document.getElementById("size-readout");
   if (read) {
-    read.textContent = "0.96\" · " + GLASS_W_MM.toFixed(1) + " × " + GLASS_H_MM.toFixed(1)
-      + " mm · " + Math.round(glass.w) + " × " + Math.round(glass.h) + " px";
+    read.textContent = glass.life
+      ? "0.96\" · " + GLASS_W_MM.toFixed(1) + " × " + GLASS_H_MM.toFixed(1) + " mm"
+      : "0.96\" · na komputerze " + glass.zoom + "×";
   }
 }
 

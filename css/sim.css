@@ -21,8 +21,8 @@
   --btn-edge: #2a2d28;
   --kbd-bg: #22241f;
   --kbd-edge: #3a3d36;
-  --screen-w: 82.23px;
-  --screen-h: 41.07px;
+  --screen-w: 512px;
+  --screen-h: 256px;
   --btn: 44px;
   --btn-gap: 8px;
   --well-pad: 5px;
@@ -401,7 +401,7 @@ canvas {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 44px;
+  min-height: var(--btn);
 }
 
 .probe-line {
