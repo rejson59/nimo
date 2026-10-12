@@ -9,6 +9,7 @@ export const DEFAULT_SETTINGS = {
   color: 0,
   invert: 0,
   theme: 0,
+  flip: 0,
   tutorial_done: 0,
   snake_best: 0,
   memory_best: 0,
@@ -50,6 +51,7 @@ export function normalize_settings(raw) {
   s.tutorial_done = s.tutorial_done ? 1 : 0;
   s.color = Math.max(0, Math.min(3, s.color | 0));
   s.invert = s.invert ? 1 : 0;
+  s.flip = s.flip ? 1 : 0;
   s.theme = Math.max(0, Math.min(4, s.theme | 0));
   s.contrast = Math.max(1, Math.min(255, s.contrast | 0));
   s.snake_best = Math.max(0, s.snake_best | 0);

@@ -15,6 +15,16 @@ import { tutorial_step_count } from "../js/firmware/apps/app_tutorial.js";
 import { tools_state } from "../js/firmware/apps/app_tools.js";
 import { react_state } from "../js/firmware/apps/app_react.js";
 import { THEMES } from "../js/firmware/nimo_theme.js";
+import {
+  panel_all_on,
+  panel_fx,
+  panel_gain,
+  panel_reset,
+  panel_sample,
+  panel_scroll,
+  panel_state,
+  panel_tick,
+} from "../js/firmware/nimo_panel.js";
 
 const mem = {};
 const beeps = [];
@@ -357,6 +367,40 @@ assert(os_top().id === "home", "leave settings after theme");
 os.event_button = -1;
 launch("home", "replace");
 os_frame(t);
+
+// sterownik: komendy nie ruszają RAM
+panel_reset();
+const ram = os.display.buf;
+ram.fill(0);
+ram[0] = 1;
+panel_scroll(1);
+panel_tick(1000);
+assert(ram[0] === 1, "scroll leaves RAM");
+assert(panel_sample(ram, 0, 0, 0) === 0, "left scroll moved origin");
+assert(panel_sample(ram, 115, 0, 0) === 1, "scrolled pixel still there");
+panel_reset();
+ram.fill(0);
+ram[127 + 63 * 128] = 1;
+assert(panel_sample(ram, 0, 0, 1) === 1, "flip maps opposite corner");
+panel_all_on(1);
+assert(panel_state().allOn === 1, "all-on flag");
+assert(ram[10] === 0, "all-on does not fill RAM");
+panel_reset();
+panel_fx(1);
+panel_tick(90 * 8);
+assert(panel_gain() > 0 && panel_gain() < 1, "fade is partial");
+panel_tick(90 * 20);
+assert(panel_gain() === 0, "fade holds off");
+panel_reset();
+
+os.event_button = -1;
+launch("panel");
+assert(os_top().id === "panel", "panel app");
+press(BTN_OK);
+assert(panel_state().scroll === 1, "scroll command");
+press(BTN_BACK);
+assert(panel_state().scroll === 0, "leaving panel stops scroll");
+assert(os_top().id === "home", "back from panel");
 
 // glyph coverage
 clear_missing();

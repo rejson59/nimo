@@ -72,7 +72,7 @@ function caption(os, notes) {
     if (!s && !m && !r) return "Snake, Pamięć";
     return "S " + s + "  P " + m;
   }
-  if (app.id === "tools") return "Stoper, minutnik";
+  if (app.id === "tools") return "Stoper, sterownik";
   if (app.id === "pad") return "Lista - " + ((os.pad && os.pad.length) || 0);
   if (app.id === "clock") return "Duży zegar";
   if (app.id === "torch") return "Białe szkło";

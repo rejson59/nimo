@@ -10,7 +10,8 @@
  *   GPIO 33  dół
  *   GPIO 25  OK
  *   GPIO 26  wstecz
- * OLED I2C: SDA 21, SCL 22, adres 0x3C
+ * OLED I2C, 4 piny, bez RST: GND, 3.3 V, SDA 21, SCL 22, adres 0x3C
+ * Sterownik SSD1306 albo SSD1315. Szkło białe albo niebieskie.
  *
  * Pełna logika menu, czatu, Snake i samouczka jest w js/firmware
  * i działa w symulatorze. Ten szkic ma ten sam stos ekranów i menu główne.

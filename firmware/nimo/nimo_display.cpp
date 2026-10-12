@@ -119,3 +119,48 @@ void display_set_contrast(uint8_t contrast) {
   g_oled->ssd1306_command(SSD1306_SETCONTRAST);
   g_oled->ssd1306_command(contrast);
 }
+
+void display_scroll(int dir) {
+  if (!g_oled) return;
+  g_oled->ssd1306_command(0x2E);
+  if (dir <= 0) return;
+  if (dir == 3) {
+    g_oled->ssd1306_command(0xA3);
+    g_oled->ssd1306_command(0x00);
+    g_oled->ssd1306_command(64);
+    g_oled->ssd1306_command(0x29);
+    g_oled->ssd1306_command(0x00);
+    g_oled->ssd1306_command(0x00);
+    g_oled->ssd1306_command(0x00);
+    g_oled->ssd1306_command(0x07);
+    g_oled->ssd1306_command(0x01);
+  } else {
+    g_oled->ssd1306_command(dir == 1 ? 0x27 : 0x26);
+    g_oled->ssd1306_command(0x00);
+    g_oled->ssd1306_command(0x00);
+    g_oled->ssd1306_command(0x00);
+    g_oled->ssd1306_command(0x07);
+    g_oled->ssd1306_command(0x00);
+    g_oled->ssd1306_command(0xFF);
+  }
+  g_oled->ssd1306_command(0x2F);
+}
+
+void display_fx(int mode) {
+  if (!g_oled) return;
+  g_oled->ssd1306_command(0x23);
+  if (mode == 1) g_oled->ssd1306_command(0x20);
+  else if (mode == 2) g_oled->ssd1306_command(0x30);
+  else g_oled->ssd1306_command(0x00);
+}
+
+void display_all_on(int on) {
+  if (!g_oled) return;
+  g_oled->ssd1306_command(on ? 0xA5 : 0xA4);
+}
+
+void display_flip(int on) {
+  if (!g_oled) return;
+  g_oled->ssd1306_command(on ? 0xA0 : 0xA1);
+  g_oled->ssd1306_command(on ? 0xC0 : 0xC8);
+}

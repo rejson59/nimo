@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/sim.css?v=desk3" />
+  <link rel="stylesheet" href="css/sim.css?v=panel1" />
   <style>
     #oled {
       width: var(--oled-w, 640px) !important;
@@ -65,7 +65,8 @@
       <ol class="steps">
         <li>Cztery przyciski stoją po prawej ekranu, jeden pod drugim. Na komputerze działają też klawisze.</li>
         <li>Samouczek prowadzi przez przyciski. ◄ na pierwszym ekranie pyta, zanim pominie. Potem wrócisz do niego z Ustawień.</li>
-        <li>W Ustawieniach, pozycja Wygląd, przełączasz jeden z pięciu zestawów. Zmiana widać od razu, ◄ cofa.</li>
+        <li>W Ustawieniach, pozycja Wygląd, przełączasz jeden z pięciu zestawów. Ten moduł jest biały albo niebieski — żółty i pasek Y/B to inne szkła.</li>
+        <li>Narzędzia, Sterownik: przewijanie, zanikanie, mruganie, cały panel i obrót. To komendy układu, nie nowy kolor.</li>
       </ol>
       <ul class="keys">
         <li><span class="sym">▲</span> <kbd>↑</kbd> wyżej · w Snake góra</li>
@@ -123,7 +124,7 @@
             </div>
             <div class="device-foot">
               <span class="grille" aria-hidden="true"></span>
-              <span class="silk">SSD1306</span>
+              <span class="silk">SSD1306/15</span>
               <span class="silk serial">NMO-0001</span>
             </div>
           </div>
@@ -164,7 +165,7 @@
         </div>
         <p class="type-note" id="type-note" hidden>Pisanie: litery z klawiatury wchodzą od razu. Enter wstawia znak z siatki, przytrzymaj Enter albo Shift+Enter, aby wysłać.</p>
         <div class="fixture-bot">
-          <span class="silk">SDA 21 · SCL 22 · 0x3C</span>
+          <span class="silk">I2C 0x3C · 3.3 V · 4 piny</span>
           <span class="pill" id="app-pill">boot</span>
         </div>
       </div>
@@ -193,6 +194,7 @@
               <li><span>●</span> GPIO 25 · INPUT_PULLUP</li>
               <li><span>◄</span> GPIO 26 · INPUT_PULLUP</li>
               <li><span>I2C</span> SDA 21 · SCL 22 · 0x3C</li>
+              <li><span>VCC</span> 3.3 V · GND · bez RST</li>
             </ul>
             <button type="button" class="textbtn" id="btn-reset">Wyczyść NVS</button>
           </section>

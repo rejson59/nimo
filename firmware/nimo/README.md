@@ -21,7 +21,10 @@ Otwórz `nimo.ino`. Wszystkie pliki `.cpp` muszą leżeć obok szkicu (Arduino I
 | ◄ wstecz | 26 | do masy, `INPUT_PULLUP` |
 | SDA | 21 | OLED I2C |
 | SCL | 22 | OLED I2C |
-| adres | 0x3C | SSD1306 128×64 |
+| VCC | 3.3 V | nie 5 V; moduł sam podbija napięcie panelu |
+| GND | masa | |
+| RST | — | tego modułu nie ma, cztery piny, raster 2.54 mm |
+| adres | 0x3C | SSD1306 albo SSD1315, 128×64 |
 
 Piny są w `nimo_config.h`.
 

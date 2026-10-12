@@ -13,7 +13,7 @@ import {
 } from "../nimo_display.js";
 import { nav_delta, press } from "../nimo_input.js";
 import { rand_int, rand_seed } from "../nimo_rand.js";
-import { os_alarm_clear, os_alarm_left, os_alarm_set, os_pop } from "../nimo_os.js";
+import { os_alarm_clear, os_alarm_left, os_alarm_set, os_launch, os_pop } from "../nimo_os.js";
 import { menu_draw, menu_move, ui_footer, ui_header, ui_set } from "../nimo_ui.js";
 
 const PRESETS = [
@@ -29,6 +29,7 @@ const LIST = [
   { id: "stop", label: "Stoper" },
   { id: "count", label: "Minutnik" },
   { id: "dice", label: "Kostka" },
+  { id: "panel", label: "Sterownik" },
 ];
 
 const st = {
@@ -142,7 +143,11 @@ export const app_tools = {
       st.sel = menu.sel;
       st.top = menu.top;
     }
-    if (press(ev, BTN_OK)) st.mode = LIST[st.sel].id;
+    if (press(ev, BTN_OK)) {
+      const id = LIST[st.sel].id;
+      if (id === "panel") os_launch("panel");
+      else st.mode = id;
+    }
     if (press(ev, BTN_BACK)) os_pop();
   },
   on_tick(os, dt) {

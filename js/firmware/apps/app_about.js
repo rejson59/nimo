@@ -8,11 +8,11 @@ import { ui_header, ui_set } from "../nimo_ui.js";
 
 const LINES = [
   "nimo os " + NIMO_VERSION,
-  "OLED 128x64",
-  "SSD1306 I2C 0x3C",
-  "4 przyciski GPIO",
-  "logika bez DOM",
-  "port: firmware/",
+  "0.96 cala 128x64",
+  "SSD1306/1315 0x3C",
+  "szkło białe/nieb.",
+  "3.3 V, 4 piny",
+  "panel do 100 Hz",
 ];
 
 export const app_about = {

@@ -2,7 +2,7 @@
 
 Symulator miniaturowego urządzenia: ESP32 i OLED 0.96" (128×64). Poligon firmware, zanim kod trafi na układ.
 
-Ekran w przeglądarce to ten sam bufor 1-bit, który na płytce pójdzie do SSD1306. Na telefonie szkło jest w skali 1:1 (21.7 × 10.9 mm). Na komputerze jest powiększone całkowitoliczbowo, bo prawdziwy panel ledwo widać. Logika menu nie zna DOM, canvasu ani `localStorage`.
+Ekran w przeglądarce to ten sam bufor 1-bit, który na płytce pójdzie do SSD1306 albo SSD1315. Na telefonie szkło jest w skali 1:1 (aktywny obszar ok. 21.7 × 10.8 mm). Na komputerze jest powiększone całkowitoliczbowo, bo prawdziwy panel ledwo widać. Logika menu nie zna DOM, canvasu ani `localStorage`.
 
 ## Uruchomienie
 
@@ -31,7 +31,11 @@ Samouczek startuje przy pierwszym wejściu. ◄ na pierwszym ekranie pyta, zanim
 
 Na pulpicie są dwie strony ikon: Czat, Gierki, Narzędzia, Alerty, a dalej Lista, Zegar, Latarka i Ustawienia. Minutnik liczy się też po wyjściu z ekranu.
 
-W Ustawieniach jest Wygląd: Cichy, Noc, Bursztyn, Moduł i Papier. Wybór zmienia szkło i stronę od razu. Barwa pikseli zostaje osobno, jeśli chcesz tylko odcień.
+W Ustawieniach jest Wygląd: Cichy, Noc, Bursztyn, Moduł i Papier. Cichy i Noc to dwa szkła tego modułu (białe albo niebieskie). Bursztyn i pasek Y/B to inne panele — sterownik nie umie zmienić koloru. Papier to invert (`0xA7`).
+
+W Narzędziach jest Sterownik: przewijanie, zanikanie, mruganie, cały panel i obrót o 180°. To komendy układu, RAM zostaje. Czystego przewijania tylko w pionie nie ma; „skos” to poziom plus pion (`0x29`). Zoom (`0xD6`) istnieje, ale rozciąga górne wiersze i tu go nie ma.
+
+Panel odświeża szkło do 100 Hz z własnej pamięci (1024 bajty). Pełna klatka po I2C 400 kHz to raczej około 40 Hz. 100 Hz pełnych klatek wymaga szybszej magistrali, krótkich przewodów i nieposyłania całego bufora co klatkę. Przewijanie i zanikanie jadą w sterowniku, bez przepisywania RAM.
 
 ## Architektura
 

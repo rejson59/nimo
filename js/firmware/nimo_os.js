@@ -14,6 +14,7 @@
 import { EV_NAME, EV_RELEASE, BTN_NAME, BEEP_OK } from "./nimo_config.js";
 import { chat_seed, normalize_settings, pad_load, pad_seed } from "./nimo_data.js";
 import { display_clear, display_create } from "./nimo_display.js";
+import { panel_reset, panel_tick } from "./nimo_panel.js";
 import { theme_use } from "./nimo_theme.js";
 
 export const os = {
@@ -67,6 +68,7 @@ export function os_init(platform) {
   os.intent = null;
   os.pad = pad_load(platform.storage_get("pad", null));
   os.alarm = null;
+  panel_reset();
 }
 
 export function os_top() {
@@ -169,6 +171,7 @@ export function os_frame(now) {
   os.last = now;
   os.now = now;
   os.uptime_ms += dt;
+  panel_tick(dt);
   if (os.alarm && !os.alarm.fired && os.uptime_ms >= os.alarm.at) {
     os.alarm.fired = 1;
     if (os.platform && os.platform.beep) os.platform.beep(BEEP_OK);

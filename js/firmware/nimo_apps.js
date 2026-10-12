@@ -13,6 +13,7 @@ import { app_home } from "./apps/app_home.js";
 import { app_clock } from "./apps/app_clock.js";
 import { app_memory } from "./apps/app_memory.js";
 import { app_pad } from "./apps/app_pad.js";
+import { app_panel } from "./apps/app_panel.js";
 import { app_react } from "./apps/app_react.js";
 import { app_settings } from "./apps/app_settings.js";
 import { app_sleep } from "./apps/app_sleep.js";
@@ -30,6 +31,7 @@ const TABLE = {
   clock: app_clock,
   memory: app_memory,
   pad: app_pad,
+  panel: app_panel,
   react: app_react,
   settings: app_settings,
   sleep: app_sleep,

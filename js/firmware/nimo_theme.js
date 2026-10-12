@@ -7,10 +7,10 @@
  */
 
 export const THEMES = [
-  { id: 0, name: "Cichy", blurb: "ciepła biel", color: 0, invert: 0, mark: 0 },
-  { id: 1, name: "Noc", blurb: "zimny błękit", color: 1, invert: 0, mark: 1 },
-  { id: 2, name: "Bursztyn", blurb: "żółte szkło", color: 2, invert: 0, mark: 0 },
-  { id: 3, name: "Moduł", blurb: "pasek Y/B", color: 3, invert: 0, mark: 0 },
+  { id: 0, name: "Cichy", blurb: "białe szkło", color: 0, invert: 0, mark: 0 },
+  { id: 1, name: "Noc", blurb: "niebieskie", color: 1, invert: 0, mark: 1 },
+  { id: 2, name: "Bursztyn", blurb: "inne szkło", color: 2, invert: 0, mark: 0 },
+  { id: 3, name: "Moduł", blurb: "inny panel", color: 3, invert: 0, mark: 0 },
   { id: 4, name: "Papier", blurb: "jasne tło", color: 0, invert: 1, mark: 1 },
 ];
 
