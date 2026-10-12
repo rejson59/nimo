@@ -65,18 +65,16 @@ export function draw_battery(d, x, y, pct, color = 1) {
 }
 
 export function ui_header(d, os, title, opts = {}) {
-  display_text(d, 1, 0, trunc(title, 13), 1);
+  display_text(d, 2, 0, trunc(title, 13), 1);
   if (!opts.plain) {
-    draw_battery(d, 118, 1, battery_pct(os), 1);
+    draw_battery(d, 117, 1, battery_pct(os), 1);
     const ts = clock_str(os);
-    display_text(d, 116 - text_width(ts), 0, ts, 1);
+    display_text(d, 114 - text_width(ts), 0, ts, 1);
   }
-  display_hline(d, 2, 8, 124, 1);
 }
 
 export function ui_footer(d, hint) {
-  display_hline(d, 2, 55, 124, 1);
-  display_text(d, 1, 57, trunc(hint, 21), 1);
+  display_text(d, 2, 57, trunc(hint, 20), 1);
 }
 
 export function ui_set(os, hints, highlight = -1, extra = {}) {
@@ -111,14 +109,18 @@ export function menu_draw(d, menu, x, y, w, h, itemH) {
     const item = menu.items[idx];
     const on = idx === menu.sel;
     const frame = theme_mark() === 1;
+    const px = x + 2;
+    const py = iy + 1;
+    const pw = Math.max(4, innerW - 4);
+    const ph = Math.max(4, itemH - 2);
     let col = 1;
-    if (on && frame) display_round(d, x, iy, innerW, itemH - 1, 1);
+    if (on && frame) display_round(d, px, py, pw, ph, 1, 3);
     else if (on) {
-      display_fill_round(d, x, iy, innerW, itemH - 1, 1);
+      display_fill_round(d, px, py, pw, ph, 1, 3);
       col = 0;
     }
-    const ty = iy + Math.max(0, Math.floor((itemH - 8) / 2));
-    let tx = x + 3;
+    const ty = py + Math.max(0, Math.floor((ph - 7) / 2));
+    let tx = px + 4;
     if (item.icon) {
       item.icon(d, x + 2, iy + Math.max(0, Math.floor((itemH - 9) / 2)), col);
       tx = x + 13;
@@ -126,7 +128,7 @@ export function menu_draw(d, menu, x, y, w, h, itemH) {
     display_text(d, tx, ty, item.label, col);
     if (item.value) {
       const vw = text_width(item.value);
-      display_text(d, x + innerW - vw - 3, ty, item.value, col);
+      display_text(d, px + pw - vw - 4, ty, item.value, col);
     }
   }
   if (showBar) {
@@ -137,7 +139,7 @@ export function menu_draw(d, menu, x, y, w, h, itemH) {
     const travel = trackH - thumb;
     const span = Math.max(1, n - win);
     const ty = y + Math.floor((travel * menu.top) / span);
-    display_fill_rect(d, trackX - 1, ty, 2, thumb, 1);
+    display_fill_round(d, trackX - 1, ty, 3, thumb, 1, 1);
   }
 }
 
@@ -147,15 +149,15 @@ export function dialog_draw(d, title, options, sel) {
   const x = Math.floor((128 - w) / 2);
   const y = Math.floor((64 - h) / 2);
   display_fill_rect(d, 0, 9, 128, 55, 0);
-  display_round(d, x, y, w, h, 1);
-  display_text(d, x + 5, y + 3, trunc(title, 16), 1);
+  display_round(d, x, y, w, h, 1, 3);
+  display_text(d, x + 6, y + 4, trunc(title, 16), 1);
   for (let i = 0; i < options.length; i++) {
-    const iy = y + 14 + i * 12;
+    const iy = y + 15 + i * 12;
     const on = i === sel;
     const frame = theme_mark() === 1;
-    if (on && frame) display_round(d, x + 4, iy - 1, w - 8, 10, 1);
-    else if (on) display_fill_round(d, x + 4, iy - 1, w - 8, 10, 1);
-    display_text(d, x + 7, iy, options[i], on && !frame ? 0 : 1);
+    if (on && frame) display_round(d, x + 5, iy - 1, w - 10, 10, 1, 3);
+    else if (on) display_fill_round(d, x + 5, iy - 1, w - 10, 10, 1, 3);
+    display_text(d, x + 8, iy, options[i], on && !frame ? 0 : 1);
   }
 }
 

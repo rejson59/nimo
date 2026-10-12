@@ -40,10 +40,10 @@ const APPS = [
 ];
 
 const SLOTS = [
-  { x: 24, y: 14 },
-  { x: 88, y: 14 },
-  { x: 24, y: 36 },
-  { x: 88, y: 36 },
+  { x: 20, y: 13 },
+  { x: 84, y: 13 },
+  { x: 20, y: 37 },
+  { x: 84, y: 37 },
 ];
 
 const st = {
@@ -168,18 +168,15 @@ function draw_status(d, os, notes) {
     const label = notes.length > 9 ? "9" : String(notes.length);
     display_text(d, 104 - text_width(label), 0, label, 1);
   }
-  draw_battery(d, 118, 1, battery_pct(os), 1);
+  draw_battery(d, 117, 1, battery_pct(os), 1);
   const pages = Math.ceil(APPS.length / PAGE);
   const page = Math.floor(st.sel / PAGE);
-  let dx = 58;
+  let dx = 56;
   for (let p = 0; p < pages; p++) {
-    if (p === page) display_fill_rect(d, dx, 2, 5, 3, 1);
-    else display_pixel(d, dx + 2, 3, 1);
-    dx += 7;
+    if (p === page) display_fill_round(d, dx, 2, 6, 3, 1, 1);
+    else display_round(d, dx + 1, 2, 4, 3, 1, 1);
+    dx += 8;
   }
-  display_pixel(d, 0, 8, 1);
-  display_pixel(d, 127, 8, 1);
-  for (let x = 2; x < 126; x += 2) display_pixel(d, x, 8, 1);
 }
 
 function draw_grid(os, d) {
@@ -192,13 +189,11 @@ function draw_grid(os, d) {
     const idx = start + i;
     const on = idx === st.sel && st.mode === MODE_GRID;
     const frame = theme_mark() === 1;
-    if (on && frame) display_round(d, slot.x - 2, slot.y - 2, 20, 20, 1);
-    else if (on) display_fill_round(d, slot.x - 2, slot.y - 2, 20, 20, 1);
+    const plateX = slot.x - 4;
+    const plateY = slot.y - 2;
+    if (on && !frame) display_fill_round(d, plateX, plateY, 24, 20, 1, 4);
+    else display_round(d, plateX, plateY, 24, 20, 1, 4);
     draw_icon(d, APPS[idx].icon, slot.x, slot.y, on && !frame ? 0 : 1);
-    const badge = APPS[idx].id === "chat"
-      ? notes.some((n) => n.app === "chat")
-      : APPS[idx].id === "notes" && notes.length > 0;
-    if (badge) display_fill_rect(d, slot.x + 13, slot.y + 13, 3, 3, on ? 0 : 1);
   }
   display_text_center(d, 57, trunc(caption(os, notes), 21), 1);
   ui_set(os, ["poprzednia", "następna", "otwórz", "uśpij"], -1, {

@@ -55,26 +55,46 @@ export function display_rect(d, x, y, w, h, c) {
   display_vline(d, x + w - 1, y, h, c);
 }
 
-/** Róg ścięty o 1 piksel. Na 128×64 to całe „zaokrąglenie”, jakie szkło uniesie. */
-export function display_fill_round(d, x, y, w, h, c) {
-  if (w < 3 || h < 3) {
+function round_inside(xx, yy, w, h, r) {
+  if (xx < 0 || yy < 0 || xx >= w || yy >= h) return false;
+  const cx = xx < r ? r - xx - 1 : xx >= w - r ? xx - (w - r) : -1;
+  const cy = yy < r ? r - yy - 1 : yy >= h - r ? yy - (h - r) : -1;
+  if (cx < 0 || cy < 0) return true;
+  return (cx + 1) * (cx + 1) + (cy + 1) * (cy + 1) <= r * r;
+}
+
+/** Promień 2 px. Na szkle widać łuk, a tekst w środku zostaje prosty. */
+export function display_fill_round(d, x, y, w, h, c, r = 2) {
+  if (w <= 0 || h <= 0) return;
+  const rad = Math.max(0, Math.min(r | 0, Math.floor(Math.min(w, h) / 2)));
+  if (rad < 1) {
     display_fill_rect(d, x, y, w, h, c);
     return;
   }
-  display_fill_rect(d, x + 1, y, w - 2, h, c);
-  display_vline(d, x, y + 1, h - 2, c);
-  display_vline(d, x + w - 1, y + 1, h - 2, c);
+  for (let yy = 0; yy < h; yy++) {
+    for (let xx = 0; xx < w; xx++) {
+      if (round_inside(xx, yy, w, h, rad)) display_pixel(d, x + xx, y + yy, c);
+    }
+  }
 }
 
-export function display_round(d, x, y, w, h, c) {
-  if (w < 3 || h < 3) {
+export function display_round(d, x, y, w, h, c, r = 2) {
+  if (w <= 0 || h <= 0) return;
+  const rad = Math.max(0, Math.min(r | 0, Math.floor(Math.min(w, h) / 2)));
+  if (rad < 1) {
     display_rect(d, x, y, w, h, c);
     return;
   }
-  display_hline(d, x + 1, y, w - 2, c);
-  display_hline(d, x + 1, y + h - 1, w - 2, c);
-  display_vline(d, x, y + 1, h - 2, c);
-  display_vline(d, x + w - 1, y + 1, h - 2, c);
+  for (let yy = 0; yy < h; yy++) {
+    for (let xx = 0; xx < w; xx++) {
+      if (!round_inside(xx, yy, w, h, rad)) continue;
+      const edge = !round_inside(xx - 1, yy, w, h, rad)
+        || !round_inside(xx + 1, yy, w, h, rad)
+        || !round_inside(xx, yy - 1, w, h, rad)
+        || !round_inside(xx, yy + 1, w, h, rad);
+      if (edge) display_pixel(d, x + xx, y + yy, c);
+    }
+  }
 }
 
 export function display_hline(d, x, y, w, c) {
