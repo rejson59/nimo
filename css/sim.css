@@ -21,8 +21,11 @@
   --btn-edge: #2a2d28;
   --kbd-bg: #22241f;
   --kbd-edge: #3a3d36;
-  --screen-w: 512px;
-  --screen-h: 256px;
+  --screen-w: 640px;
+  --screen-h: 320px;
+  --oled-w: 640px;
+  --oled-h: 320px;
+  --oled-btn: 56px;
   --btn: 44px;
   --btn-gap: 8px;
   --well-pad: 5px;
@@ -50,15 +53,17 @@ body {
 }
 
 .page {
-  width: min(1140px, calc(100% - 32px));
+  width: min(1280px, calc(100% - 24px));
   margin: 0 auto;
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
-  gap: 36px;
-  align-items: center;
-  padding: 28px 0 40px;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  align-items: start;
+  padding: 22px 0 40px;
 }
+
+.stage { order: -1; }
 
 .eyebrow {
   margin: 0 0 8px;
@@ -296,8 +301,9 @@ summary:focus-visible {
 
 canvas {
   display: block;
-  width: var(--screen-w);
-  height: var(--screen-h);
+  width: var(--oled-w, var(--screen-w));
+  height: var(--oled-h, var(--screen-h));
+  max-width: none;
   background: var(--oled-bg, #000);
   image-rendering: pixelated;
   image-rendering: crisp-edges;
@@ -547,13 +553,16 @@ canvas {
   font-size: 12px;
 }
 
-@media (max-width: 980px) {
+@media (min-width: 1180px) {
   .page {
-    grid-template-columns: 1fr;
-    align-items: start;
-    gap: 22px;
-    padding-top: 18px;
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+    align-items: center;
+    gap: 36px;
   }
+  .stage { order: 0; }
+}
+
+@media (max-width: 980px) {
   h1 { font-size: 28px; }
   .keys { grid-template-columns: 1fr 1fr; }
   .poligon-grid { grid-template-columns: 1fr; }

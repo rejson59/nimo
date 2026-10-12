@@ -74,9 +74,10 @@ function cssPxPerMm() {
 
 function isPhone() {
   const ua = navigator.userAgent || "";
-  const touch = navigator.maxTouchPoints > 0;
-  const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && touch);
-  return ios || /Android/i.test(ua);
+  const w = window.innerWidth || 1200;
+  const h = window.innerHeight || 800;
+  if (w >= 700 || Math.min(w, h) >= 540) return false;
+  return /iPhone|iPod|Android|Mobile/i.test(ua) && !/Windows NT/i.test(ua);
 }
 
 /**
@@ -94,14 +95,14 @@ function glassCssPx() {
   const w = (GLASS_W_MM * pxPerMm) / zoom;
   const h = (GLASS_H_MM * pxPerMm) / zoom;
   if (phone) return { w, h, zoom: 1, life: true };
-  const stage = document.querySelector(".stage");
-  const stageW = stage ? stage.clientWidth : window.innerWidth;
-  const side = window.innerWidth < 980 ? 72 : 220;
-  const availW = Math.max(128, stageW - side);
-  const availH = Math.max(160, window.innerHeight - 140);
-  let s = Math.floor(Math.min(availW / 128, availH / 64));
-  if (s < 4) s = 4;
-  if (s > 6) s = 6;
+  const wdw = window.innerWidth || 1200;
+  const side = wdw < 1100 ? 92 : 300;
+  const availW = Math.max(200, wdw - side - 24);
+  const availH = Math.max(140, window.innerHeight - 96);
+  let s = Math.floor(Math.min(availW / 128, availH / 64, 8));
+  if (s < 2) s = 2;
+  if (s < 4 && availW >= 520) s = 4;
+  if (s > 8) s = 8;
   return { w: 128 * s, h: 64 * s, zoom: s, life: false };
 }
 
@@ -117,9 +118,14 @@ function applyScale() {
   glass = glassCssPx();
   scale = backingFor(glass.w);
   const root = document.documentElement;
-  const btn = glass.life ? 44 : Math.max(44, Math.min(60, Math.round((glass.h - 24) / 4)));
-  root.style.setProperty("--screen-w", glass.w.toFixed(2) + "px");
-  root.style.setProperty("--screen-h", glass.h.toFixed(2) + "px");
+  const btn = glass.life ? 44 : Math.max(48, Math.min(64, Math.round((glass.h - 24) / 4)));
+  const wpx = glass.w.toFixed(2) + "px";
+  const hpx = glass.h.toFixed(2) + "px";
+  root.style.setProperty("--screen-w", wpx);
+  root.style.setProperty("--screen-h", hpx);
+  root.style.setProperty("--oled-w", wpx);
+  root.style.setProperty("--oled-h", hpx);
+  root.style.setProperty("--oled-btn", btn + "px");
   root.style.setProperty("--btn", btn + "px");
   root.style.setProperty("--btn-gap", "8px");
   const read = document.getElementById("size-readout");

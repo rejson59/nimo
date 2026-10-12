@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
   <meta name="color-scheme" content="dark" />
   <title>nimo · symulator OLED 128×64</title>
   <meta name="description" content="Poligon firmware dla miniaturowego urządzenia nimo: ESP32 i ekran OLED 0.96 cala, 128×64." />
@@ -10,7 +12,49 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/sim.css" />
+  <link rel="stylesheet" href="css/sim.css?v=desk3" />
+  <style>
+    #oled {
+      width: var(--oled-w, 640px) !important;
+      height: var(--oled-h, 320px) !important;
+      max-width: none !important;
+    }
+    .btn-col { width: var(--oled-btn, 56px) !important; }
+    .hw {
+      width: var(--oled-btn, 56px) !important;
+      height: var(--oled-btn, 56px) !important;
+    }
+  </style>
+  <script>
+    (function () {
+      function fit() {
+        var ua = navigator.userAgent || "";
+        var w = window.innerWidth || 1024;
+        var h = window.innerHeight || 800;
+        var phone = w < 700 && Math.min(w, h) < 540 && /iPhone|iPod|Android|Mobile/i.test(ua) && !/Windows NT/i.test(ua);
+        var root = document.documentElement;
+        if (phone) {
+          var ppm = (/iPhone|iPad|iPod/.test(ua) ? 163 : 160) / 25.4;
+          root.style.setProperty("--oled-w", (21.744 * ppm).toFixed(2) + "px");
+          root.style.setProperty("--oled-h", (10.864 * ppm).toFixed(2) + "px");
+          root.style.setProperty("--oled-btn", "44px");
+          return;
+        }
+        var side = w < 1100 ? 92 : 300;
+        var availW = Math.max(200, w - side - 24);
+        var availH = Math.max(140, h - 96);
+        var s = Math.floor(Math.min(availW / 128, availH / 64, 8));
+        if (s < 2) s = 2;
+        if (s < 4 && availW >= 520) s = 4;
+        if (s > 8) s = 8;
+        root.style.setProperty("--oled-w", (128 * s) + "px");
+        root.style.setProperty("--oled-h", (64 * s) + "px");
+        root.style.setProperty("--oled-btn", Math.max(48, Math.min(64, Math.round((64 * s - 24) / 4))) + "px");
+      }
+      fit();
+      window.addEventListener("resize", fit);
+    })();
+  </script>
 </head>
 <body>
   <div class="page">
@@ -158,6 +202,6 @@
     </div>
   </div>
   <noscript>Symulator potrzebuje JavaScript — firmware liczy się w przeglądarce, zanim trafi na ESP32.</noscript>
-  <script type="module" src="js/platform/main.js"></script>
+  <script type="module" src="js/platform/main.js?v=desk3"></script>
 </body>
 </html>
