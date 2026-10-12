@@ -29,7 +29,9 @@
 html, body {
   margin: 0;
   min-height: 100%;
-  background: var(--bg);
+  background:
+    radial-gradient(680px 240px at 72% 18%, rgba(227, 163, 58, 0.06), transparent 62%),
+    var(--bg);
   color: var(--ink);
   font-family: Sora, "Segoe UI", sans-serif;
   font-size: 15px;
@@ -282,7 +284,7 @@ summary:focus-visible {
   background: var(--well);
   border-radius: 4px;
   padding: var(--well-pad);
-  box-shadow: 0 0 0 1px #1c1e18;
+  box-shadow: 0 0 0 1px #3a3224;
 }
 
 canvas {
@@ -321,8 +323,8 @@ canvas {
   padding: 0;
   cursor: pointer;
   color: #d9d3c8;
-  background: #23261f;
-  box-shadow: none;
+  background: linear-gradient(#2e332b, #1c1f1a);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   transition: transform 70ms ease, background 70ms ease, color 70ms ease;
   touch-action: none;
   user-select: none;
@@ -372,6 +374,12 @@ canvas {
   flex-direction: column;
   min-width: 148px;
   flex: 1 1 160px;
+  padding-top: 22px;
+}
+
+.hw:hover {
+  border-color: #8a7344;
+  color: #f6f1e8;
 }
 
 .probe-spacer,
@@ -386,7 +394,7 @@ canvas {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 36px;
+  min-height: 44px;
 }
 
 .probe-line {
@@ -539,7 +547,7 @@ canvas {
     gap: 22px;
     padding-top: 18px;
   }
-  h1 { font-size: 42px; }
+  h1 { font-size: 28px; }
   .keys { grid-template-columns: 1fr 1fr; }
   .poligon-grid { grid-template-columns: 1fr; }
 }
@@ -547,7 +555,7 @@ canvas {
 @media (max-width: 720px) {
   .page { width: min(100% - 20px, 1140px); }
   .rig { flex-direction: column; }
-  .probe-col { min-width: 0; }
+  .probe-col { min-width: 0; padding-top: 8px; }
   .probe-spacer, .probe-spacer.bot { display: none; }
   .probes {
     height: auto;

@@ -12,6 +12,8 @@ import { KEY_ROWS } from "../js/firmware/apps/app_chat.js";
 import { snake_state } from "../js/firmware/apps/app_snake.js";
 import { memory_state } from "../js/firmware/apps/app_memory.js";
 import { tutorial_step_count } from "../js/firmware/apps/app_tutorial.js";
+import { tools_state } from "../js/firmware/apps/app_tools.js";
+import { react_state } from "../js/firmware/apps/app_react.js";
 
 const mem = {};
 const beeps = [];
@@ -119,16 +121,22 @@ launch("home", "replace");
 os_frame(t);
 assert(os_top().id === "home", "replaced with home");
 
-// z Czatu góra zawija na Alerty, nie na Ustawienia
-press(BTN_UP);
+// strona 1: Czat, Gierki, Narzędzia, Alerty. Alerty to trzeci dół.
+press(BTN_DOWN);
+press(BTN_DOWN);
+press(BTN_DOWN);
 press(BTN_OK);
-assert(os_top().id === "home", "up-wrap stays on home alerts, got " + (os_top() && os_top().id));
+assert(os_top().id === "home", "alerts stay on home, got " + (os_top() && os_top().id));
 assert(os.ui.hints[3] === "pulpit", "shade is home mode, hints " + (os.ui.hints || []).join("|"));
 dump("07b-shade");
 press(BTN_BACK);
-press(BTN_UP);
+// strona 2 kończy się Ustawieniami: z Alertów cztery razy dół
+press(BTN_DOWN);
+press(BTN_DOWN);
+press(BTN_DOWN);
+press(BTN_DOWN);
 press(BTN_OK);
-assert(os_top().id === "settings", "up from alerts opens settings, got " + (os_top() && os_top().id));
+assert(os_top().id === "settings", "down to settings, got " + (os_top() && os_top().id));
 dump("08-settings");
 
 press(BTN_OK); // contrast edit
@@ -141,12 +149,8 @@ assert(os.settings.sound === 0, "sound toggled off");
 press(BTN_BACK);
 assert(os_top().id === "home", "back from settings");
 
-// po ustawieniach (sel 2) jeden dół to Alerty, nie Czat
+// po ustawieniach (ostatnia ikona) jeden dół wraca na Czat
 press(BTN_DOWN);
-press(BTN_OK);
-assert(os_top().id === "home", "one down from settings opens alerts, got " + (os_top() && os_top().id));
-press(BTN_BACK);
-press(BTN_DOWN); // Alerty → Czat
 press(BTN_OK);
 assert(os_top().id === "chat", "open chat, got " + os_top().id);
 dump("10-chat-list");
@@ -248,6 +252,85 @@ dump("25-note-chat");
 press(BTN_BACK);
 press(BTN_BACK);
 assert(os_top().id === "home", "back from note chat");
+
+// narzędzia: stoper, minutnik zostaje po wyjściu, kostka
+os.event_button = -1;
+launch("tools");
+assert(os_top().id === "tools", "tools");
+press(BTN_OK);
+assert(os.ui.hints[2] === "start", "stopwatch idle");
+press(BTN_OK);
+tick(200);
+assert(os.ui.hints[2] === "stop", "stopwatch running");
+press(BTN_BACK);
+press(BTN_DOWN);
+press(BTN_OK);
+press(BTN_OK);
+assert(os.alarm && !os.alarm.fired, "timer armed");
+press(BTN_BACK);
+assert(os_top().id === "home", "timer survives leaving tools");
+os.event_button = -1;
+launch("tools");
+press(BTN_OK);
+assert(!os.alarm, "timer cancelled");
+press(BTN_BACK);
+press(BTN_DOWN);
+press(BTN_OK);
+press(BTN_OK);
+for (let i = 0; i < 12; i++) tick(80);
+assert(tools_state().rolling === 0, "dice settled");
+assert(os.ui.hints[2] === "rzuć", "dice ready");
+dump("26-dice");
+press(BTN_BACK);
+press(BTN_BACK);
+assert(os_top().id === "home", "leave tools");
+
+os.event_button = -1;
+launch("pad");
+press(BTN_OK);
+assert(os.pad[0].done === 1, "pad toggles done");
+dump("27-pad");
+press(BTN_BACK);
+
+os.event_button = -1;
+launch("clock");
+os.second = 15;
+os_frame(t);
+dump("28-clock");
+press(BTN_BACK);
+
+os.event_button = -1;
+launch("torch");
+os_frame(t);
+dump("29-torch");
+press(BTN_BACK);
+
+os.event_button = -1;
+launch("react");
+press(BTN_OK);
+press(BTN_OK);
+assert(react_state().mode === "early", "early reaction, mode " + react_state().mode);
+press(BTN_BACK);
+
+// pominięcie samouczka pyta, zanim wyjdzie
+os.event_button = -1;
+launch("tutorial");
+press(BTN_BACK);
+assert(os_top().id === "tutorial", "skip asks first");
+assert(os.ui.hints[2] === "zatwierdź", "warning confirm");
+dump("30-skip-warn");
+press(BTN_OK);
+assert(os_top().id === "tutorial", "default stays");
+assert(os.ui.hints[3] === "pomiń", "welcome again");
+press(BTN_BACK);
+press(BTN_UP);
+press(BTN_OK);
+assert(os_top().id === "home", "confirmed skip goes home, got " + (os_top() && os_top().id));
+assert(os.settings.tutorial_done === 1, "skip marks tutorial done");
+
+os.event_button = -1;
+launch("home", "replace");
+os_frame(t);
 
 // glyph coverage
 clear_missing();

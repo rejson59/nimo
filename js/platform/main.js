@@ -15,6 +15,7 @@ import {
 import { storage_clear, storage_get, storage_set } from "./storage_web.js";
 import { EV_LONG, EV_PRESS } from "../firmware/nimo_config.js";
 import { launch } from "../firmware/nimo_apps.js";
+import { tutorial_ask_skip } from "../firmware/apps/app_tutorial.js";
 import { os, os_clear_stack, os_factory_reset, os_frame, os_init, os_on_event, os_top } from "../firmware/nimo_os.js";
 
 const canvas = document.getElementById("oled");
@@ -178,6 +179,7 @@ function frame(now) {
   const clock = new Date();
   os.hour = clock.getHours();
   os.minute = clock.getMinutes();
+  os.second = clock.getSeconds();
   input_pump(now);
   os_frame(now);
   present(canvas, os.display, os.settings, scale, glass);
@@ -203,6 +205,17 @@ document.getElementById("btn-tutorial")?.addEventListener("click", () => {
   audio_unlock();
   if (os_top()?.id === "tutorial") return;
   os.event_button = -1;
+  launch("tutorial");
+});
+
+document.getElementById("btn-skip")?.addEventListener("click", () => {
+  audio_unlock();
+  os.event_button = -1;
+  if (os_top()?.id === "tutorial") {
+    tutorial_ask_skip();
+    return;
+  }
+  os.intent = Object.assign({}, os.intent, { tutorial_warn: 1 });
   launch("tutorial");
 });
 

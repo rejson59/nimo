@@ -6,7 +6,7 @@
 
 static const int NIMO_W = 128;
 static const int NIMO_H = 64;
-static const char NIMO_VERSION[] = "0.1.0";
+static const char NIMO_VERSION[] = "0.2.0";
 
 enum NimoButton : uint8_t {
   BTN_UP = 0,

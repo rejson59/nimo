@@ -27,7 +27,9 @@ Cztery, po prawej ekranu, jeden pod drugim. Na komputerze działają też klawis
 
 Przytrzymanie trwa około pół sekundy — na obudowie widać pierścień. Długie ◄ pomija samouczek i wychodzi z aplikacji.
 
-Samouczek startuje przy pierwszym wejściu i jest w Ustawieniach.
+Samouczek startuje przy pierwszym wejściu. ◄ na pierwszym ekranie pyta, zanim go pominie. Wrócisz do niego z Ustawień.
+
+Na pulpicie są dwie strony ikon: Czat, Gierki, Narzędzia, Alerty, a dalej Lista, Zegar, Latarka i Ustawienia. Minutnik liczy się też po wyjściu z ekranu.
 
 ## Architektura
 

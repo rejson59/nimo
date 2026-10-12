@@ -26,11 +26,16 @@ const MODE_GRID = 0;
 const MODE_NOTES = 1;
 const MODE_POWER = 2;
 
+const PAGE = 4;
 const APPS = [
   { id: "chat", label: "Czat", icon: "chat" },
   { id: "games", label: "Gierki", icon: "play" },
-  { id: "settings", label: "Ustawienia", icon: "sliders" },
+  { id: "tools", label: "Narzędzia", icon: "box" },
   { id: "notes", label: "Alerty", icon: "bell" },
+  { id: "pad", label: "Lista", icon: "list" },
+  { id: "clock", label: "Zegar", icon: "clock" },
+  { id: "torch", label: "Latarka", icon: "sun" },
+  { id: "settings", label: "Ustawienia", icon: "sliders" },
 ];
 
 const SLOTS = [
@@ -62,9 +67,14 @@ function caption(os, notes) {
   if (app.id === "games") {
     const s = os.settings.snake_best | 0;
     const m = os.settings.memory_best | 0;
-    if (!s && !m) return "Snake, Pamięć";
-    return "S " + s + "   P " + m;
+    const r = os.settings.react_best | 0;
+    if (!s && !m && !r) return "Snake, Pamięć";
+    return "S " + s + "  P " + m;
   }
+  if (app.id === "tools") return "Stoper, minutnik";
+  if (app.id === "pad") return "Lista - " + ((os.pad && os.pad.length) || 0);
+  if (app.id === "clock") return "Duży zegar";
+  if (app.id === "torch") return "Białe szkło";
   if (app.id === "settings") return "Kontrast " + contrast_label(os.settings.contrast);
   return notes.length ? "Alerty - " + notes.length : "Alerty - spokój";
 }
@@ -74,6 +84,11 @@ function open_note(os, note) {
   if (note.app === "chat") {
     os.intent = { contact: note.contact };
     os_launch("chat");
+    return;
+  }
+  if (note.app === "alarm") {
+    os.intent = Object.assign({}, os.intent, { tool: "done" });
+    os_launch("tools");
     return;
   }
   if (note.app) os_launch(note.app);
@@ -116,7 +131,7 @@ export const app_home = {
       if (press(ev, BTN_BACK)) st.mode = MODE_GRID;
       return;
     }
-    // Kolejność czytania, nie siatka 2D: dół idzie Czat → Gierki → Ustawienia → Alerty.
+    // Dwie strony po 4 ikony. Dół idzie dalej, także na następną stronę.
     const dir = nav_delta(ev);
     if (dir) st.sel = (st.sel + (dir > 0 ? 1 : -1) + APPS.length) % APPS.length;
     if (press(ev, BTN_OK)) {
@@ -153,6 +168,14 @@ function draw_status(d, os, notes) {
     display_text(d, 104 - text_width(label), 0, label, 1);
   }
   draw_battery(d, 118, 1, battery_pct(os), 1);
+  const pages = Math.ceil(APPS.length / PAGE);
+  const page = Math.floor(st.sel / PAGE);
+  let dx = 58;
+  for (let p = 0; p < pages; p++) {
+    if (p === page) display_fill_rect(d, dx, 2, 5, 3, 1);
+    else display_pixel(d, dx + 2, 3, 1);
+    dx += 7;
+  }
   display_pixel(d, 0, 8, 1);
   display_pixel(d, 127, 8, 1);
   for (let x = 2; x < 126; x += 2) display_pixel(d, x, 8, 1);
@@ -161,14 +184,17 @@ function draw_status(d, os, notes) {
 function draw_grid(os, d) {
   const notes = notes_collect(os);
   draw_status(d, os, notes);
-  for (let i = 0; i < APPS.length; i++) {
+  const page = Math.floor(st.sel / PAGE);
+  const start = page * PAGE;
+  for (let i = 0; i < PAGE && start + i < APPS.length; i++) {
     const slot = SLOTS[i];
-    const on = i === st.sel && st.mode === MODE_GRID;
+    const idx = start + i;
+    const on = idx === st.sel && st.mode === MODE_GRID;
     if (on) display_fill_rect(d, slot.x - 2, slot.y - 2, 20, 20, 1);
-    draw_icon(d, APPS[i].icon, slot.x, slot.y, on ? 0 : 1);
-    const badge = APPS[i].id === "chat"
+    draw_icon(d, APPS[idx].icon, slot.x, slot.y, on ? 0 : 1);
+    const badge = APPS[idx].id === "chat"
       ? notes.some((n) => n.app === "chat")
-      : APPS[i].id === "notes" && notes.length > 0;
+      : APPS[idx].id === "notes" && notes.length > 0;
     if (badge) display_fill_rect(d, slot.x + 13, slot.y + 13, 3, 3, on ? 0 : 1);
   }
   display_text_center(d, 57, trunc(caption(os, notes), 21), 1);
@@ -273,6 +299,78 @@ const ICONS = {
     "....####........",
     "..############..",
     "....####........",
+    "................",
+    "................",
+    "................",
+    "................",
+  ],
+  box: [
+    "................",
+    "................",
+    "....##########..",
+    "....#........#..",
+    "....##########..",
+    "...############.",
+    "...#...####...#.",
+    "...#...####...#.",
+    "...#..........#.",
+    "...############.",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+  ],
+  list: [
+    "................",
+    "................",
+    ".##..########...",
+    ".##..########...",
+    "................",
+    ".##..######.....",
+    ".##..######.....",
+    "................",
+    ".##..########...",
+    ".##..########...",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+  ],
+  clock: [
+    "................",
+    "................",
+    "......####......",
+    "....##....##....",
+    "...#...##...#...",
+    "...#...##...#...",
+    "...#.....#..#...",
+    "....##....##....",
+    "......####......",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+  ],
+  sun: [
+    "................",
+    "................",
+    ".......##.......",
+    "......####......",
+    ".....######.....",
+    ".....######.....",
+    "......####......",
+    ".......##.......",
+    "......####......",
+    "....########....",
+    "................",
+    "................",
     "................",
     "................",
     "................",

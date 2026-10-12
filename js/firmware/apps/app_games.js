@@ -12,6 +12,7 @@ function items(os) {
   return [
     { id: "snake", label: "Snake", value: os.settings.snake_best ? String(os.settings.snake_best) : "" },
     { id: "memory", label: "Pamięć", value: os.settings.memory_best ? String(os.settings.memory_best) : "" },
+    { id: "react", label: "Reakcja", value: os.settings.react_best ? String(os.settings.react_best) : "" },
   ];
 }
 

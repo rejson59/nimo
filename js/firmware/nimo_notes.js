@@ -21,6 +21,14 @@ export function notes_collect(os) {
       body: last || "nowa",
     });
   }
+  if (os.alarm && os.alarm.fired) {
+    out.push({
+      key: "alarm",
+      app: "alarm",
+      title: os.alarm.title || "Minutnik",
+      body: os.alarm.body || "koniec",
+    });
+  }
   if (os.settings && !os.settings.tutorial_done) {
     out.push({
       key: "tut",

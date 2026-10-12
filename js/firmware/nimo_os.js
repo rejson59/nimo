@@ -11,8 +11,8 @@
  * Zegar wpisuje w os.hour / os.minute przed klatką.
  */
 
-import { EV_NAME, EV_RELEASE, BTN_NAME } from "./nimo_config.js";
-import { chat_seed, normalize_settings } from "./nimo_data.js";
+import { EV_NAME, EV_RELEASE, BTN_NAME, BEEP_OK } from "./nimo_config.js";
+import { chat_seed, normalize_settings, pad_load, pad_seed } from "./nimo_data.js";
 import { display_clear, display_create } from "./nimo_display.js";
 
 export const os = {
@@ -23,6 +23,7 @@ export const os = {
   display: null,
   hour: 12,
   minute: 0,
+  second: 0,
   now: 0,
   last: 0,
   uptime_ms: 0,
@@ -31,6 +32,8 @@ export const os = {
   log: [],
   ui: empty_ui(),
   open: null,
+  pad: null,
+  alarm: null,
 };
 
 function empty_ui() {
@@ -61,6 +64,8 @@ export function os_init(platform) {
   os.log = [];
   os.ui = empty_ui();
   os.intent = null;
+  os.pad = pad_load(platform.storage_get("pad", null));
+  os.alarm = null;
 }
 
 export function os_top() {
@@ -76,11 +81,14 @@ export function os_persist() {
   if (!os.platform) return;
   os.platform.storage_set("settings", os.settings);
   os.platform.storage_set("chat", os.chat);
+  os.platform.storage_set("pad", os.pad || []);
 }
 
 export function os_factory_reset() {
   os.settings = normalize_settings(null);
   os.chat = chat_seed();
+  os.pad = pad_seed();
+  os.alarm = null;
   os_persist();
   os_log("factory reset");
 }
@@ -117,6 +125,24 @@ export function os_pop() {
 }
 
 /** Aplikacje wołają to zamiast importować się nawzajem. Rejestr ustawia nimo_apps.js. */
+export function os_alarm_set(delay_ms, title, body) {
+  os.alarm = {
+    at: os.uptime_ms + Math.max(0, delay_ms | 0),
+    title: title || "Minutnik",
+    body: body || "koniec",
+    fired: 0,
+  };
+}
+
+export function os_alarm_clear() {
+  os.alarm = null;
+}
+
+export function os_alarm_left() {
+  if (!os.alarm || os.alarm.fired) return 0;
+  return Math.max(0, os.alarm.at - os.uptime_ms);
+}
+
 export function os_launch(id, how = "push") {
   if (typeof os.open === "function") os.open(id, how);
 }
@@ -142,6 +168,11 @@ export function os_frame(now) {
   os.last = now;
   os.now = now;
   os.uptime_ms += dt;
+  if (os.alarm && !os.alarm.fired && os.uptime_ms >= os.alarm.at) {
+    os.alarm.fired = 1;
+    if (os.platform && os.platform.beep) os.platform.beep(BEEP_OK);
+    os_log("alarm");
+  }
   const app = os_top();
   if (app && app.on_tick) app.on_tick(os, dt);
   display_clear(os.display);

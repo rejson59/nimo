@@ -10,6 +10,7 @@ export const DEFAULT_SETTINGS = {
   tutorial_done: 0,
   snake_best: 0,
   memory_best: 0,
+  react_best: 0,
 };
 
 export function chat_seed() {
@@ -49,5 +50,25 @@ export function normalize_settings(raw) {
   s.contrast = Math.max(1, Math.min(255, s.contrast | 0));
   s.snake_best = Math.max(0, s.snake_best | 0);
   s.memory_best = Math.max(0, s.memory_best | 0);
+  s.react_best = Math.max(0, s.react_best | 0);
   return s;
+}
+
+export function pad_seed() {
+  return [
+    { text: "Wgrać firmware", done: 0 },
+    { text: "Sprawdzić piny", done: 0 },
+    { text: "Naładować", done: 0 },
+  ];
+}
+
+export function pad_load(raw) {
+  if (!Array.isArray(raw)) return pad_seed();
+  const out = [];
+  for (let i = 0; i < raw.length && out.length < 8; i++) {
+    const text = String((raw[i] && raw[i].text) || "").slice(0, 18);
+    if (!text) continue;
+    out.push({ text, done: raw[i].done ? 1 : 0 });
+  }
+  return out;
 }

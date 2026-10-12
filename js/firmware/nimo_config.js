@@ -5,7 +5,7 @@
 
 export const NIMO_W = 128;
 export const NIMO_H = 64;
-export const NIMO_VERSION = "0.1.0";
+export const NIMO_VERSION = "0.2.0";
 
 export const BTN_UP = 0;
 export const BTN_DOWN = 1;

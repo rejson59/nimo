@@ -20,7 +20,7 @@
       <p class="lede">Poligon firmware, zanim wgrasz kod na układ. Szkło ma prawdziwe 0.96 cala — ten sam kawałek ekranu na telefonie i na komputerze. Przyciski są większe, żeby dało się je nacisnąć.</p>
       <ol class="steps">
         <li>Cztery przyciski stoją po prawej ekranu, jeden pod drugim. Na komputerze działają też klawisze.</li>
-        <li>Samouczek na OLED prowadzi przez cały system. Długie ◄ pomija go i wychodzi z aplikacji.</li>
+        <li>Samouczek prowadzi przez przyciski. ◄ na pierwszym ekranie pyta, zanim pominie. Potem wrócisz do niego z Ustawień.</li>
         <li>Logika menu jest w <code>js/firmware</code> i nie zna przeglądarki — stąd da się ją przepisać na C++.</li>
       </ol>
       <ul class="keys">
@@ -31,6 +31,7 @@
       </ul>
       <div class="actions">
         <button type="button" class="textbtn" id="btn-tutorial">Samouczek</button>
+        <button type="button" class="textbtn" id="btn-skip">Pomiń samouczek</button>
         <button type="button" class="textbtn" id="btn-shot">Zrzut OLED</button>
       </div>
     </header>
@@ -39,7 +40,7 @@
       <div class="fixture">
         <div class="fixture-top">
           <span class="silk">Poligon 01</span>
-          <span class="silk">128×64 · 1-bit</span>
+          <span class="silk" id="size-readout">0.96" · 21.7 × 10.9 mm</span>
         </div>
         <div class="rig">
           <div class="plastic">

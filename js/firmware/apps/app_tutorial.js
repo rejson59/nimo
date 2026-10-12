@@ -1,11 +1,12 @@
 /**
  * Samouczek przycisków. Kroki, które czekają na konkretny przycisk,
  * nie puszczają dalej złego wciśnięcia — użytkownik ma je poczuć.
- * Długie ◄ pomija całość (oprócz lekcji o przytrzymaniu, gdzie ono idzie dalej).
+ * ◄ na powitaniu i długie ◄ później pytają, zanim pominą kurs.
+ * Lekcja przytrzymania nadal używa długiego ◄ jako gestu.
  */
 
 import { BTN_BACK, BTN_DOWN, BTN_OK, BTN_UP, BEEP_ERR } from "../nimo_config.js";
-import { display_fill_rect, display_pixel, display_text } from "../nimo_display.js";
+import { display_fill_rect, display_pixel, display_rect, display_text } from "../nimo_display.js";
 import { long, nav_delta, press } from "../nimo_input.js";
 import { os_launch, os_persist, os_pop } from "../nimo_os.js";
 import {
@@ -21,8 +22,8 @@ import {
 const STEPS = [
   {
     title: "Witaj",
-    body: "Jestem nimo. Poligon firmware, zanim wgrasz kod na ESP32. Długie ◄ pomija.",
-    footer: "● dalej",
+    body: "Jestem nimo. ◄ pyta, zanim pominie kurs. Potem wrócisz z Ustawień.",
+    footer: "● dalej   ◄ pomiń",
     expect: "ok",
     highlight: BTN_OK,
     hints: ["", "", "dalej", "pomiń"],
@@ -111,7 +112,7 @@ const STEPS = [
   },
   {
     title: "Gotowe",
-    body: "Pulpit z ikonami: Czat, Gierki, Ustawienia i Alerty.",
+    body: "Dwie strony ikon. Dół przechodzi na listę, zegar i latarkę.",
     footer: "● do menu",
     expect: "ok",
     highlight: BTN_OK,
@@ -132,6 +133,8 @@ const st = {
   top: 0,
   flash: "",
   flashUntil: 0,
+  warn: 0,
+  wsel: 1,
 };
 
 function finish(os) {
@@ -147,6 +150,15 @@ function flash(os, text) {
   os.platform.beep(BEEP_ERR);
 }
 
+function open_warn() {
+  st.warn = 1;
+  st.wsel = 1;
+}
+
+export function tutorial_ask_skip() {
+  open_warn();
+}
+
 function advance() {
   st.step++;
   st.moved = false;
@@ -157,21 +169,38 @@ function advance() {
 
 export const app_tutorial = {
   id: "tutorial",
-  on_enter() {
+  on_enter(os) {
     st.step = 0;
     st.moved = false;
     st.sel = 0;
     st.top = 0;
     st.flash = "";
     st.flashUntil = 0;
+    const warn = os.intent && os.intent.tutorial_warn;
+    if (os.intent) os.intent.tutorial_warn = 0;
+    st.warn = warn ? 1 : 0;
+    st.wsel = 1;
   },
   on_exit() {},
   on_input(os, ev) {
+    if (st.warn) {
+      const dir = nav_delta(ev);
+      if (dir) st.wsel = st.wsel ? 0 : 1;
+      if (press(ev, BTN_OK)) {
+        if (st.wsel === 0) finish(os);
+        else st.warn = 0;
+      }
+      if (press(ev, BTN_BACK)) st.warn = 0;
+      return;
+    }
     const step = STEPS[st.step];
     if (!step) return;
-    const skipping = long(ev, BTN_BACK) && step.expect !== "long-back";
-    if (skipping) {
-      finish(os);
+    if (long(ev, BTN_BACK) && step.expect !== "long-back") {
+      open_warn();
+      return;
+    }
+    if (st.step === 0 && press(ev, BTN_BACK)) {
+      open_warn();
       return;
     }
     if (step.expect === "demo") {
@@ -231,8 +260,24 @@ export const app_tutorial = {
     const showFlash = os.now < st.flashUntil;
     ui_footer(d, showFlash ? st.flash : step.footer);
     ui_set(os, step.hints, step.highlight, { subs: step.subs });
+    if (st.warn) draw_warn(d, os);
   },
 };
+
+function draw_warn(d, os) {
+  display_fill_rect(d, 0, 0, 128, 64, 0);
+  display_rect(d, 6, 4, 116, 56, 1);
+  display_text(d, 14, 10, "Pominąć kurs?", 1);
+  display_text(d, 14, 22, "Nie poznasz", 1);
+  display_text(d, 14, 30, "przycisków.", 1);
+  const opts = ["Pomiń", "Zostań"];
+  for (let i = 0; i < 2; i++) {
+    const x = 16 + i * 52;
+    if (i === st.wsel) display_fill_rect(d, x - 3, 42, 46, 11, 1);
+    display_text(d, x, 44, opts[i], i === st.wsel ? 0 : 1);
+  }
+  ui_set(os, ["wybór", "wybór", "zatwierdź", "zostań"], -1);
+}
 
 function draw_dots(d, index, n) {
   const gap = 4;
