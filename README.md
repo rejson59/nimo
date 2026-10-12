@@ -31,6 +31,8 @@ Samouczek startuje przy pierwszym wejściu. ◄ na pierwszym ekranie pyta, zanim
 
 Na pulpicie są dwie strony ikon: Czat, Gierki, Narzędzia, Alerty, a dalej Lista, Zegar, Latarka i Ustawienia. Minutnik liczy się też po wyjściu z ekranu.
 
+W Ustawieniach jest Wygląd: Cichy, Noc, Bursztyn, Moduł i Papier. Wybór zmienia szkło i stronę od razu. Barwa pikseli zostaje osobno, jeśli chcesz tylko odcień.
+
 ## Architektura
 
 ```

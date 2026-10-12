@@ -4,14 +4,16 @@
  */
 
 import { BTN_BACK, BTN_OK, BEEP_ERR, BEEP_OK, COLOR_NAME, CONTRAST_STEPS } from "../nimo_config.js";
+import { display_fill_rect, display_rect, display_text, display_text_center } from "../nimo_display.js";
 import { nav_delta, press } from "../nimo_input.js";
 import { os_factory_reset, os_launch, os_persist, os_pop } from "../nimo_os.js";
-import { display_fill_rect, display_rect, display_text } from "../nimo_display.js";
+import { THEMES, theme_apply, theme_of } from "../nimo_theme.js";
 import { dialog_draw, menu_draw, menu_move, ui_footer, ui_header, ui_set } from "../nimo_ui.js";
 
 const MODE_LIST = 0;
 const MODE_CONTRAST = 1;
 const MODE_RESET = 2;
+const MODE_THEME = 3;
 const WIN = 4;
 
 const st = {
@@ -21,6 +23,10 @@ const st = {
   cidx: 4,
   saved: 255,
   rsel: 1,
+  tsel: 0,
+  savedTheme: 0,
+  savedColor: 0,
+  savedInvert: 0,
 };
 
 function contrast_index(v) {
@@ -45,10 +51,30 @@ function items(os) {
     { id: "contrast", label: "Kontrast", value: contrast_label(os.settings.contrast) },
     { id: "sound", label: "Dźwięk", value: os.settings.sound ? "tak" : "nie" },
     { id: "color", label: "Barwa", value: COLOR_NAME[os.settings.color] || "?" },
+    { id: "theme", label: "Wygląd", value: theme_of(os).name },
     { id: "tutorial", label: "Samouczek", value: "" },
     { id: "about", label: "O systemie", value: "" },
     { id: "reset", label: "Reset danych", value: "" },
   ];
+}
+
+function draw_theme(os, d) {
+  const t = THEMES[st.tsel] || THEMES[0];
+  ui_header(d, os, "Wygląd");
+  display_text_center(d, 14, t.name, 1);
+  display_text_center(d, 24, t.blurb, 1);
+  const x = 24;
+  const y = 36;
+  const w = 80;
+  if (t.mark) {
+    display_rect(d, x, y, w, 11, 1);
+    display_text(d, x + 16, y + 2, "wybór", 1);
+  } else {
+    display_fill_rect(d, x, y, w, 11, 1);
+    display_text(d, x + 16, y + 2, "wybór", 0);
+  }
+  ui_footer(d, "▲▼ próbuj   ● zostaw");
+  ui_set(os, ["poprzedni", "następny", "zostaw", "anuluj"], -1);
 }
 
 function apply_contrast(os, v) {
@@ -60,6 +86,8 @@ export const app_settings = {
   id: "settings",
   on_enter(os) {
     st.mode = MODE_LIST;
+    st.sel = 0;
+    st.top = 0;
     st.cidx = contrast_index(os.settings.contrast);
   },
   on_exit() {},
@@ -73,6 +101,27 @@ export const app_settings = {
           os_factory_reset();
           if (os.platform.reboot) os.platform.reboot();
         } else st.mode = MODE_LIST;
+      }
+      return;
+    }
+    if (st.mode === MODE_THEME) {
+      const dir = nav_delta(ev);
+      if (dir) {
+        const n = THEMES.length;
+        st.tsel = (st.tsel + (dir > 0 ? 1 : -1) + n) % n;
+        theme_apply(os, st.tsel);
+      }
+      if (press(ev, BTN_OK)) {
+        os_persist();
+        st.mode = MODE_LIST;
+        os.platform.beep(BEEP_OK);
+      }
+      if (press(ev, BTN_BACK)) {
+        os.settings.theme = st.savedTheme;
+        os.settings.color = st.savedColor;
+        os.settings.invert = st.savedInvert;
+        if (os.platform.set_pixel_color) os.platform.set_pixel_color(st.savedColor);
+        st.mode = MODE_LIST;
       }
       return;
     }
@@ -115,6 +164,13 @@ export const app_settings = {
       os.settings.color = (os.settings.color + 1) % COLOR_NAME.length;
       os_persist();
       if (os.platform.set_pixel_color) os.platform.set_pixel_color(os.settings.color);
+    } else if (id === "theme") {
+      st.savedTheme = os.settings.theme | 0;
+      st.savedColor = os.settings.color | 0;
+      st.savedInvert = os.settings.invert ? 1 : 0;
+      st.tsel = st.savedTheme;
+      st.mode = MODE_THEME;
+      theme_apply(os, st.tsel);
     } else if (id === "tutorial") {
       os_launch("tutorial");
     } else if (id === "about") {
@@ -126,6 +182,10 @@ export const app_settings = {
   },
   on_tick() {},
   on_draw(os, d) {
+    if (st.mode === MODE_THEME) {
+      draw_theme(os, d);
+      return;
+    }
     ui_header(d, os, "Ustawienia");
     if (st.mode === MODE_CONTRAST) {
       display_text(d, 2, 16, "Kontrast", 1);

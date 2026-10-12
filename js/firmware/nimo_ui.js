@@ -3,6 +3,7 @@
  * Rysują wyłącznie przez nimo_display — bez wiedzy o canvas.
  */
 
+import { theme_mark } from "./nimo_theme.js";
 import {
   display_fill_rect,
   display_hline,
@@ -107,8 +108,13 @@ export function menu_draw(d, menu, x, y, w, h, itemH) {
     const iy = y + i * itemH;
     const item = menu.items[idx];
     const on = idx === menu.sel;
-    if (on) display_fill_rect(d, x, iy, innerW, itemH - 1, 1);
-    const col = on ? 0 : 1;
+    const frame = theme_mark() === 1;
+    let col = 1;
+    if (on && frame) display_rect(d, x, iy, innerW, itemH - 1, 1);
+    else if (on) {
+      display_fill_rect(d, x, iy, innerW, itemH - 1, 1);
+      col = 0;
+    }
     const ty = iy + Math.max(0, Math.floor((itemH - 8) / 2));
     let tx = x + 3;
     if (item.icon) {
@@ -143,8 +149,11 @@ export function dialog_draw(d, title, options, sel) {
   display_text(d, x + 5, y + 3, trunc(title, 16), 1);
   for (let i = 0; i < options.length; i++) {
     const iy = y + 14 + i * 12;
-    if (i === sel) display_fill_rect(d, x + 4, iy - 1, w - 8, 10, 1);
-    display_text(d, x + 7, iy, options[i], i === sel ? 0 : 1);
+    const on = i === sel;
+    const frame = theme_mark() === 1;
+    if (on && frame) display_rect(d, x + 4, iy - 1, w - 8, 10, 1);
+    else if (on) display_fill_rect(d, x + 4, iy - 1, w - 8, 10, 1);
+    display_text(d, x + 7, iy, options[i], on && !frame ? 0 : 1);
   }
 }
 

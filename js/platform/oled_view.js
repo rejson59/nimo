@@ -44,11 +44,14 @@ export function present(canvas, display, settings, scale, box) {
   const buf = display.buf;
   const mode = settings.color | 0;
   const contrast = settings.contrast | 0;
+  const invert = settings.invert ? 1 : 0;
   let o = 0;
   for (let y = 0; y < 64; y++) {
-    const on = lit_color(mode, y, contrast);
+    const lit = lit_color(mode, y, contrast);
+    const ink = invert ? [22, 18, 14] : lit;
+    const paper = invert ? lit : [0, 0, 0];
     for (let x = 0; x < 128; x++) {
-      const px = buf[y * 128 + x] ? on : [0, 0, 0];
+      const px = buf[y * 128 + x] ? ink : paper;
       for (let sy = 0; sy < scale; sy++) {
         let row = ((y * scale + sy) * w + x * scale) * 4;
         for (let sx = 0; sx < scale; sx++) {

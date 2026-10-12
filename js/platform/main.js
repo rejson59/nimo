@@ -115,6 +115,68 @@ function applyScale() {
   }
 }
 
+const SHELLS = [
+  {
+    bg: "#0e0f0c", ink: "#f3efe6", muted: "#a39c8e", faint: "#6f6a60",
+    amber: "#e3a33a", dim: "rgba(227, 163, 58, 0.16)", spot: "rgba(227, 163, 58, 0.06)",
+    plate: "#191b17", edge: "#34382f", well: "#050605", ring: "#3a3224",
+    btn: "#23261f", btnInk: "#d9d3c8", btnEdge: "#2a2d28", kbd: "#22241f", kbdEdge: "#3a3d36",
+    light: 0,
+  },
+  {
+    bg: "#070a12", ink: "#e7f1fb", muted: "#8eabc4", faint: "#5d7388",
+    amber: "#8ec8f0", dim: "rgba(142, 200, 240, 0.16)", spot: "rgba(80, 140, 200, 0.08)",
+    plate: "#101722", edge: "#243246", well: "#03060c", ring: "#2a3c52",
+    btn: "#15202c", btnInk: "#d5e6f4", btnEdge: "#2c4156", kbd: "#121a24", kbdEdge: "#314556",
+    light: 0,
+  },
+  {
+    bg: "#120e09", ink: "#f8ecd4", muted: "#c4aa84", faint: "#8a7358",
+    amber: "#e3a33a", dim: "rgba(227, 163, 58, 0.18)", spot: "rgba(227, 163, 58, 0.1)",
+    plate: "#1c1610", edge: "#3d3224", well: "#0a0704", ring: "#5a4630",
+    btn: "#2a2118", btnInk: "#f0ddb8", btnEdge: "#4a3a28", kbd: "#241c14", kbdEdge: "#4a3c2c",
+    light: 0,
+  },
+  {
+    bg: "#0e100e", ink: "#e7f0ea", muted: "#9aab9e", faint: "#667268",
+    amber: "#d6b15a", dim: "rgba(214, 177, 90, 0.16)", spot: "rgba(120, 170, 210, 0.07)",
+    plate: "#151815", edge: "#2c342e", well: "#050705", ring: "#3a4038",
+    btn: "#1c221e", btnInk: "#dce8df", btnEdge: "#343c36", kbd: "#171c18", kbdEdge: "#343c36",
+    light: 0,
+  },
+  {
+    bg: "#e7e1d4", ink: "#1c1914", muted: "#5e564c", faint: "#8a8174",
+    amber: "#8a5a18", dim: "rgba(138, 90, 24, 0.14)", spot: "rgba(138, 90, 24, 0.08)",
+    plate: "#f4efe6", edge: "#d4cbb8", well: "#f7f1e6", ring: "#c4b49a",
+    btn: "#efe8dc", btnInk: "#2a241c", btnEdge: "#c9beaa", kbd: "#fffaf2", kbdEdge: "#c9beaa",
+    light: 1,
+  },
+];
+
+function applyShell(theme) {
+  const s = SHELLS[theme | 0] || SHELLS[0];
+  const root = document.documentElement;
+  const set = (k, v) => root.style.setProperty(k, v);
+  set("--bg", s.bg);
+  set("--ink", s.ink);
+  set("--muted", s.muted);
+  set("--faint", s.faint);
+  set("--amber", s.amber);
+  set("--amber-dim", s.dim);
+  set("--spot", s.spot);
+  set("--plate", s.plate);
+  set("--plate-edge", s.edge);
+  set("--well", s.well);
+  set("--well-ring", s.ring);
+  set("--btn-face", s.btn);
+  set("--btn-ink", s.btnInk);
+  set("--btn-edge", s.btnEdge);
+  set("--kbd-bg", s.kbd);
+  set("--kbd-edge", s.kbdEdge);
+  root.style.colorScheme = s.light ? "light" : "dark";
+  if (canvas) canvas.style.background = s.light ? s.well : "#000";
+}
+
 function sync(now) {
   const view = input_view(now);
   const hints = os.ui.hints || ["", "", "", ""];
@@ -161,6 +223,7 @@ function sync(now) {
     }
   }
   document.body.classList.toggle("is-sleep", os.ui.app === "sleep");
+  applyShell(os.settings ? os.settings.theme : 0);
 }
 
 function format_uptime(ms) {

@@ -14,6 +14,7 @@
 import { EV_NAME, EV_RELEASE, BTN_NAME, BEEP_OK } from "./nimo_config.js";
 import { chat_seed, normalize_settings, pad_load, pad_seed } from "./nimo_data.js";
 import { display_clear, display_create } from "./nimo_display.js";
+import { theme_use } from "./nimo_theme.js";
 
 export const os = {
   platform: null,
@@ -176,6 +177,7 @@ export function os_frame(now) {
   const app = os_top();
   if (app && app.on_tick) app.on_tick(os, dt);
   display_clear(os.display);
+  theme_use(os);
   if (app && app.on_draw) app.on_draw(os, os.display);
   os.ui.app = app ? app.id : "";
   os.ui.stack = os.stack.map((a) => a.id);

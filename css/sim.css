@@ -14,6 +14,13 @@
   --plastic-3: #242820;
   --rubber: #1a1d19;
   --well: #050605;
+  --well-ring: #3a3224;
+  --spot: rgba(227, 163, 58, 0.06);
+  --btn-face: #23261f;
+  --btn-ink: #d9d3c8;
+  --btn-edge: #2a2d28;
+  --kbd-bg: #22241f;
+  --kbd-edge: #3a3d36;
   --screen-w: 82.23px;
   --screen-h: 41.07px;
   --btn: 44px;
@@ -30,7 +37,7 @@ html, body {
   margin: 0;
   min-height: 100%;
   background:
-    radial-gradient(680px 240px at 72% 18%, rgba(227, 163, 58, 0.06), transparent 62%),
+    radial-gradient(680px 240px at 72% 18%, var(--spot), transparent 62%),
     var(--bg);
   color: var(--ink);
   font-family: Sora, "Segoe UI", sans-serif;
@@ -133,12 +140,12 @@ kbd {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
   font-size: 11px;
   line-height: 1;
-  border: 1px solid #3a3d36;
+  border: 1px solid var(--kbd-edge);
   border-bottom-width: 2px;
   border-radius: 4px;
   padding: 3px 5px;
   color: var(--ink);
-  background: #22241f;
+  background: var(--kbd-bg);
 }
 
 .actions {
@@ -150,7 +157,7 @@ kbd {
 
 .textbtn {
   appearance: none;
-  border: 1px solid #3c4036;
+  border: 1px solid var(--kbd-edge);
   background: transparent;
   color: var(--ink);
   font: inherit;
@@ -201,11 +208,11 @@ summary:focus-visible {
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(243, 239, 230, 0.42);
+  color: var(--faint);
 }
 
 .silk.brand {
-  color: rgba(243, 239, 230, 0.72);
+  color: var(--muted);
   letter-spacing: 0.22em;
 }
 
@@ -284,14 +291,14 @@ summary:focus-visible {
   background: var(--well);
   border-radius: 4px;
   padding: var(--well-pad);
-  box-shadow: 0 0 0 1px #3a3224;
+  box-shadow: 0 0 0 1px var(--well-ring);
 }
 
 canvas {
   display: block;
   width: var(--screen-w);
   height: var(--screen-h);
-  background: #000;
+  background: var(--oled-bg, #000);
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
@@ -318,12 +325,12 @@ canvas {
   position: relative;
   width: var(--btn);
   height: var(--btn);
-  border: 1px solid #2a2d28;
+  border: 1px solid var(--btn-edge);
   border-radius: 50%;
   padding: 0;
   cursor: pointer;
-  color: #d9d3c8;
-  background: linear-gradient(#2e332b, #1c1f1a);
+  color: var(--btn-ink);
+  background: var(--btn-face);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   transition: transform 70ms ease, background 70ms ease, color 70ms ease;
   touch-action: none;
