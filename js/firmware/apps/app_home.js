@@ -1,6 +1,6 @@
 /**
- * Pulpit. Sześć ikon na jednej stronie, każda wyśrodkowana w ramce.
- * Alerty nie są ikoną: liczba siedzi obok godziny, a ▲ wysuwa roletę.
+ * Pulpit. Sześć pozycji w jednej liście — nazwa jest czytelna,
+ * znaczek tylko prowadzi. Alerty siedzą obok godziny, ▲ wysuwa roletę.
  */
 
 import { BTN_BACK, BTN_OK, BTN_UP } from "../nimo_config.js";
@@ -24,22 +24,17 @@ const MODE_GRID = 0;
 const MODE_NOTES = 1;
 const MODE_POWER = 2;
 
-const COLS = 3;
-const PLATE_W = 34;
-const PLATE_H = 19;
-const GAP_X = 6;
-const GAP_Y = 3;
-const ORIGIN_X = 7;
-const ORIGIN_Y = 10;
+const ROW_Y = 9;
+const ROW_H = 9;
 const SHADE_FULL = 56;
 
 const APPS = [
   { id: "chat", label: "Czat", icon: "chat" },
-  { id: "games", label: "Gierki", icon: "pad" },
+  { id: "games", label: "Gierki", icon: "play" },
   { id: "clock", label: "Zegar", icon: "clock" },
   { id: "pad", label: "Lista", icon: "list" },
   { id: "torch", label: "Latarka", icon: "torch" },
-  { id: "settings", label: "Ustawienia", icon: "gear" },
+  { id: "settings", label: "Ustawienia", icon: "sliders" },
 ];
 
 const st = {
@@ -51,15 +46,6 @@ const st = {
   shade: 0,
   shadeH: 0,
 };
-
-function slot_at(i) {
-  const col = i % COLS;
-  const row = Math.floor(i / COLS);
-  return {
-    x: ORIGIN_X + col * (PLATE_W + GAP_X),
-    y: ORIGIN_Y + row * (PLATE_H + GAP_Y),
-  };
-}
 
 function open_note(os, note) {
   if (!note) return;
@@ -151,7 +137,7 @@ export const app_home = {
     void os;
   },
   on_draw(os, d) {
-    draw_grid(os, d);
+    draw_home(os, d);
     if (st.mode === MODE_NOTES || st.shadeH) draw_shade(os, d);
     if (st.mode === MODE_POWER) {
       dialog_draw(d, "Uśpić nimo?", ["Tak", "Nie"], st.psel);
@@ -189,19 +175,39 @@ function draw_status(d, os, notes) {
   draw_battery(d, 117, 1, battery_pct(os), 1);
 }
 
-function draw_grid(os, d) {
+function row_value(app, notes, os) {
+  if (app.id === "chat") {
+    let n = 0;
+    for (let i = 0; i < notes.length; i++) if (notes[i].app === "chat") n++;
+    return n ? String(n) : "";
+  }
+  if (app.id === "pad") {
+    const n = os.pad ? os.pad.length : 0;
+    return n ? String(n) : "";
+  }
+  return "";
+}
+
+function draw_home(os, d) {
   const notes = notes_collect(os);
   draw_status(d, os, notes);
   const frame = theme_mark() === 1;
   for (let i = 0; i < APPS.length; i++) {
-    const slot = slot_at(i);
+    const y = ROW_Y + i * ROW_H;
     const on = i === st.sel && st.mode === MODE_GRID;
-    if (on && !frame) display_fill_round(d, slot.x, slot.y, PLATE_W, PLATE_H, 1, 3);
-    else display_round(d, slot.x, slot.y, PLATE_W, PLATE_H, 1, 3);
-    draw_icon(d, APPS[i].icon, slot.x, slot.y, PLATE_W, PLATE_H, on && !frame ? 0 : 1);
+    let col = 1;
+    if (on && frame) display_round(d, 2, y, 124, ROW_H, 1, 3);
+    else if (on) {
+      display_fill_round(d, 2, y, 124, ROW_H, 1, 3);
+      col = 0;
+    }
+    const ty = y + Math.floor((ROW_H - 7) / 2);
+    draw_icon(d, APPS[i].icon, 6, ty, 8, 7, col);
+    display_text(d, 17, ty, APPS[i].label, col);
+    const value = row_value(APPS[i], notes, os);
+    if (value) display_text(d, 122 - text_width(value), ty, value, col);
   }
   const app = APPS[st.sel];
-  display_text_center(d, 56, trunc(app ? app.label : "", 21), 1);
   ui_set(os, ["alerty", "dalej", "otwórz", "uśpij"], -1, {
     subs: ["", "", app ? app.label : "", ""],
   });
@@ -284,75 +290,49 @@ function draw_icon(d, kind, plateX, plateY, plateW, plateH, color) {
 
 const ICONS = {
   chat: [
-    "...##########...",
-    "..#..........#..",
-    ".#............#.",
-    ".#....####....#.",
-    ".#............#.",
-    "..#..........#..",
-    "...##########...",
-    "......##........",
-    ".......#........",
+    "######.",
+    "#....#.",
+    "#.##.#.",
+    "######.",
+    "..##...",
+    "...#...",
   ],
-  pad: [
-    "...##########...",
-    ".##..........##.",
-    "#..#......##..#.",
-    "#.###....#.#..#.",
-    "#..#......##..#.",
-    ".##..........##.",
-    "...##########...",
-    ".....#....#.....",
+  play: [
+    "#......",
+    "##.....",
+    "###....",
+    "####...",
+    "###....",
+    "##.....",
+    "#......",
   ],
   clock: [
-    "...............",
-    ".....#####.....",
-    "....##...##....",
-    "...#...#...#...",
-    "..#....#....#..",
-    ".##....#....##.",
-    ".#.....#.....#.",
-    ".#.....##....#.",
-    ".#.......###.#.",
-    ".##.........##.",
-    "..#.........#..",
-    "...#.......#...",
-    "....##...##....",
-    ".....#####.....",
-    "...............",
+    ".#####.",
+    "#..#..#",
+    "#.....#",
+    "#...#.#",
+    ".#####.",
   ],
   list: [
-    ".##.##########.",
-    ".##.##########.",
-    "...............",
-    ".##.##########.",
-    ".##.##########.",
-    "...............",
-    ".##.##########.",
-    ".##.##########.",
+    "#.#####",
+    ".......",
+    "#.#####",
+    ".......",
+    "#.#####",
   ],
   torch: [
-    "##..............",
-    ".##.............",
-    "..##...######...",
-    "...##.##....##..",
-    "....##...##..#..",
-    "...##.##....##..",
-    "..##...######...",
-    ".##.............",
-    "##..............",
+    "#######",
+    ".#####.",
+    "...#...",
+    "...#...",
+    "..###..",
   ],
-  gear: [
-    ".......#........",
-    "....#######.....",
-    "..##..#.#..##...",
-    ".#...#####...#..",
-    "#...##...##...#.",
-    "####.......####.",
-    "#...##...##...#.",
-    ".#...#####...#..",
-    "..##..#.#..##...",
-    "....#######.....",
-    ".......#........",
+  sliders: [
+    "..##....",
+    "########",
+    ".....##.",
+    "########",
+    "##......",
+    "########",
   ],
 };

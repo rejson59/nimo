@@ -112,7 +112,7 @@ const STEPS = [
   },
   {
     title: "Gotowe",
-    body: "Sześć ikon na stronie. ▲ przy zegarze wysuwa alerty.",
+    body: "Lista sześciu rzeczy. ▲ przy zegarze wysuwa alerty.",
     footer: "● do menu",
     expect: "ok",
     highlight: BTN_OK,

@@ -29,7 +29,7 @@ Przytrzymanie trwa około pół sekundy — na obudowie widać pierścień. Dłu
 
 Samouczek startuje przy pierwszym wejściu. ◄ na pierwszym ekranie pyta, zanim go pominie. Wrócisz do niego z Ustawień.
 
-Na pulpicie jest sześć ikon: Czat, Gierki, Zegar, Lista, Latarka i Ustawienia. ▲ wysuwa alerty obok godziny. Zegar ma czas, stoper i minutnik. Minutnik liczy się też po wyjściu. Kostka jest w Gierkach.
+Na pulpicie jest lista: Czat, Gierki, Zegar, Lista, Latarka i Ustawienia. ▲ wysuwa alerty obok godziny. Zegar ma czas, stoper i minutnik. Minutnik liczy się też po wyjściu. Kostka jest w Gierkach.
 
 W Ustawieniach jest Wygląd: Cichy, Noc, Bursztyn, Moduł i Papier. Cichy i Noc to dwa szkła tego modułu (białe albo niebieskie). Bursztyn i pasek Y/B to inne panele — sterownik nie umie zmienić koloru. Papier to invert (`0xA7`).
 
