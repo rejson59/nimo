@@ -1,0 +1,11 @@
+{
+  "name": "nimo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Symulator miniaturowego urządzenia nimo — ESP32 i OLED 128×64",
+  "scripts": {
+    "test": "node tests/firmware_test.js",
+    "font": "python3 tools/build_font.py"
+  }
+}

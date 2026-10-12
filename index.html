@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>nimo · symulator OLED 128×64</title>
+  <meta name="description" content="Poligon firmware dla miniaturowego urządzenia nimo: ESP32 i ekran OLED 0.96 cala, 128×64." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23161a16'/%3E%3Crect x='4' y='9' width='18' height='14' rx='1.5' fill='%23000' stroke='%23e3a33a' stroke-width='1'/%3E%3Crect x='7' y='12' width='2' height='2' fill='%23f4f1ea'/%3E%3Crect x='11' y='12' width='2' height='2' fill='%23f4f1ea'/%3E%3Crect x='15' y='16' width='2' height='2' fill='%23f4f1ea'/%3E%3Ccircle cx='26' cy='12' r='1.4' fill='%232a2e29'/%3E%3Ccircle cx='26' cy='16.5' r='1.4' fill='%232a2e29'/%3E%3Ccircle cx='26' cy='21' r='1.4' fill='%232a2e29'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/sim.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="intro">
+      <p class="eyebrow">ESP32 · SSD1306 · OLED 0.96"</p>
+      <h1>nimo</h1>
+      <p class="lede">Poligon firmware, zanim wgrasz kod na układ. Ekran to bufor 128×64 — czarne tło, piksele w odcieniu bieli.</p>
+      <ol class="steps">
+        <li>Cztery przyciski stoją po prawej ekranu, jeden pod drugim. Na komputerze działają też klawisze.</li>
+        <li>Samouczek na OLED prowadzi przez cały system. Długie ◄ pomija go i wychodzi z aplikacji.</li>
+        <li>Logika menu jest w <code>js/firmware</code> i nie zna przeglądarki — stąd da się ją przepisać na C++.</li>
+      </ol>
+      <ul class="keys">
+        <li><span class="sym">▲</span> <kbd>↑</kbd> wyżej · w Snake góra</li>
+        <li><span class="sym">▼</span> <kbd>↓</kbd> niżej · w Snake dół</li>
+        <li><span class="sym">●</span> <kbd>Enter</kbd> zatwierdź · w Snake prawo</li>
+        <li><span class="sym">◄</span> <kbd>Esc</kbd> wstecz · w Snake lewo</li>
+      </ul>
+      <div class="actions">
+        <button type="button" class="textbtn" id="btn-tutorial">Samouczek</button>
+        <button type="button" class="textbtn" id="btn-shot">Zrzut OLED</button>
+      </div>
+    </header>
+
+    <div class="stage">
+      <div class="fixture">
+        <div class="fixture-top">
+          <span class="silk">Poligon 01</span>
+          <span class="silk">128×64 · 1-bit</span>
+        </div>
+        <div class="rig">
+          <div class="plastic">
+            <span class="screw tl" aria-hidden="true"></span>
+            <span class="screw tr" aria-hidden="true"></span>
+            <span class="screw bl" aria-hidden="true"></span>
+            <span class="screw br" aria-hidden="true"></span>
+            <div class="device-head">
+              <span class="led" id="led"></span>
+              <span class="silk brand">nimo</span>
+              <span class="silk dim">ESP32-WROOM</span>
+            </div>
+            <div class="screen-row">
+              <div class="well">
+                <canvas id="oled" width="512" height="256" aria-label="Ekran OLED 128 na 64 piksele"></canvas>
+                <div class="glass" aria-hidden="true"></div>
+              </div>
+              <div class="btn-col" id="btn-col">
+                <button type="button" class="hw" data-btn="0" data-fallback="Góra" aria-label="Góra">
+                  <span class="ring"></span>
+                  <span class="glyph">▲</span>
+                </button>
+                <button type="button" class="hw" data-btn="1" data-fallback="Dół" aria-label="Dół">
+                  <span class="ring"></span>
+                  <span class="glyph">▼</span>
+                </button>
+                <button type="button" class="hw" data-btn="2" data-fallback="OK" aria-label="OK">
+                  <span class="ring"></span>
+                  <span class="glyph">●</span>
+                </button>
+                <button type="button" class="hw" data-btn="3" data-fallback="Wstecz" aria-label="Wstecz">
+                  <span class="ring"></span>
+                  <span class="glyph">◄</span>
+                </button>
+              </div>
+            </div>
+            <div class="device-foot">
+              <span class="grille" aria-hidden="true"></span>
+              <span class="silk">0.96" OLED · SSD1306</span>
+              <span class="silk serial">NMO-0001</span>
+            </div>
+          </div>
+          <div class="probe-col">
+            <div class="probe-spacer"><span class="silk">teraz</span></div>
+            <div class="probes" id="probes">
+              <div class="probe" data-i="0">
+                <span class="probe-line"></span>
+                <div class="probe-copy">
+                  <div class="probe-main"><span class="k">▲</span> <span class="t">wyżej</span></div>
+                  <div class="probe-meta"><kbd>↑</kbd> <span class="s" hidden></span></div>
+                </div>
+              </div>
+              <div class="probe" data-i="1">
+                <span class="probe-line"></span>
+                <div class="probe-copy">
+                  <div class="probe-main"><span class="k">▼</span> <span class="t">niżej</span></div>
+                  <div class="probe-meta"><kbd>↓</kbd> <span class="s" hidden></span></div>
+                </div>
+              </div>
+              <div class="probe" data-i="2">
+                <span class="probe-line"></span>
+                <div class="probe-copy">
+                  <div class="probe-main"><span class="k">●</span> <span class="t">OK</span></div>
+                  <div class="probe-meta"><kbd>Enter</kbd> <span class="s" hidden></span></div>
+                </div>
+              </div>
+              <div class="probe" data-i="3">
+                <span class="probe-line"></span>
+                <div class="probe-copy">
+                  <div class="probe-main"><span class="k">◄</span> <span class="t">wstecz</span></div>
+                  <div class="probe-meta"><kbd>Esc</kbd> <span class="s" hidden></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="probe-spacer bot"></div>
+          </div>
+        </div>
+        <p class="type-note" id="type-note" hidden>Pisanie: litery z klawiatury wchodzą od razu. Enter wstawia znak z siatki, przytrzymaj Enter albo Shift+Enter, aby wysłać.</p>
+        <div class="fixture-bot">
+          <span class="silk">SDA 21 · SCL 22 · 0x3C</span>
+          <span class="pill" id="app-pill">boot</span>
+        </div>
+      </div>
+
+      <details class="poligon" id="poligon">
+        <summary>Poligon — stos, log, piny</summary>
+        <div class="poligon-grid">
+          <section>
+            <h2>Stan</h2>
+            <dl>
+              <div><dt>Stos</dt><dd id="pol-stack">—</dd></div>
+              <div><dt>Zdarzenie</dt><dd id="pol-last">—</dd></div>
+              <div><dt>Uptime</dt><dd id="pol-up">00:00:00</dd></div>
+              <div><dt>Klatki</dt><dd id="pol-fps">—</dd></div>
+            </dl>
+          </section>
+          <section>
+            <h2>Log</h2>
+            <ol id="pol-log"></ol>
+          </section>
+          <section>
+            <h2>Piny pod Arduino</h2>
+            <ul class="pins">
+              <li><span>▲</span> GPIO 32 · INPUT_PULLUP</li>
+              <li><span>▼</span> GPIO 33 · INPUT_PULLUP</li>
+              <li><span>●</span> GPIO 25 · INPUT_PULLUP</li>
+              <li><span>◄</span> GPIO 26 · INPUT_PULLUP</li>
+              <li><span>I2C</span> SDA 21 · SCL 22 · 0x3C</li>
+            </ul>
+            <button type="button" class="textbtn" id="btn-reset">Wyczyść NVS</button>
+          </section>
+        </div>
+      </details>
+      <p class="fine">Ustawienia i czat zostają w tej przeglądarce — tak jak NVS na ESP32. Nic nie jest wgrywane na układ.</p>
+    </div>
+  </div>
+  <noscript>Symulator potrzebuje JavaScript — firmware liczy się w przeglądarce, zanim trafi na ESP32.</noscript>
+  <script type="module" src="js/platform/main.js"></script>
+</body>
+</html>
