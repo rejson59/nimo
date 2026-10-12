@@ -132,16 +132,13 @@ launch("home", "replace");
 os_frame(t);
 assert(os_top().id === "home", "replaced with home");
 
-// strona 1: Czat, Gierki, Narzędzia, Alerty. Alerty to trzeci dół.
-press(BTN_DOWN);
-press(BTN_DOWN);
-press(BTN_DOWN);
-press(BTN_OK);
-assert(os_top().id === "home", "alerts stay on home, got " + (os_top() && os_top().id));
-assert(os.ui.hints[3] === "pulpit", "shade is home mode, hints " + (os.ui.hints || []).join("|"));
+// ▲ wysuwa roletę alertów. Sześć ikon, ostatnia to Ustawienia.
+press(BTN_UP);
+assert(os_top().id === "home", "shade stays on home, got " + (os_top() && os_top().id));
+assert(os.ui.hints[3] === "zamknij", "shade close hint, hints " + (os.ui.hints || []).join("|"));
 dump("07b-shade");
 press(BTN_BACK);
-// strona 2 kończy się Ustawieniami: z Alertów cztery razy dół
+press(BTN_DOWN);
 press(BTN_DOWN);
 press(BTN_DOWN);
 press(BTN_DOWN);
@@ -264,28 +261,30 @@ press(BTN_BACK);
 press(BTN_BACK);
 assert(os_top().id === "home", "back from note chat");
 
-// narzędzia: stoper, minutnik zostaje po wyjściu, kostka
+// zegar: stoper, minutnik zostaje po wyjściu, kostka w narzędziach
 os.event_button = -1;
-launch("tools");
-assert(os_top().id === "tools", "tools");
-press(BTN_OK);
+launch("clock");
+assert(os_top().id === "clock", "clock");
+press(BTN_DOWN);
 assert(os.ui.hints[2] === "start", "stopwatch idle");
 press(BTN_OK);
 tick(200);
 assert(os.ui.hints[2] === "stop", "stopwatch running");
 press(BTN_BACK);
-press(BTN_DOWN);
-press(BTN_OK);
+press(BTN_UP);
 press(BTN_OK);
 assert(os.alarm && !os.alarm.fired, "timer armed");
 press(BTN_BACK);
-assert(os_top().id === "home", "timer survives leaving tools");
+assert(os_top().id === "home", "timer survives leaving clock");
 os.event_button = -1;
-launch("tools");
+launch("clock");
 press(BTN_OK);
 assert(!os.alarm, "timer cancelled");
 press(BTN_BACK);
-press(BTN_DOWN);
+press(BTN_BACK);
+assert(os_top().id === "home", "leave clock after timer");
+os.event_button = -1;
+launch("tools");
 press(BTN_OK);
 press(BTN_OK);
 for (let i = 0; i < 12; i++) tick(80);

@@ -1,6 +1,6 @@
 /**
- * Ciche powiadomienia. Nie ma tu dzwonka na cały ekran —
- * pulpit pokazuje liczbę, panel „Alerty” listę.
+ * Ciche powiadomienia. Liczba siedzi obok godziny,
+ * a ▲ na pulpicie wysuwa roletę z listą.
  * Na ESP32 to byłby ten sam przegląd flag (unread, bateria, samouczek).
  */
 

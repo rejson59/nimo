@@ -54,6 +54,7 @@ function items(os) {
     { id: "theme", label: "Wygląd", value: theme_of(os).name },
     { id: "tutorial", label: "Samouczek", value: "" },
     { id: "about", label: "O systemie", value: "" },
+    { id: "panel", label: "Sterownik", value: "" },
     { id: "reset", label: "Reset danych", value: "" },
   ];
 }
@@ -175,6 +176,8 @@ export const app_settings = {
       os_launch("tutorial");
     } else if (id === "about") {
       os_launch("about");
+    } else if (id === "panel") {
+      os_launch("panel");
     } else if (id === "reset") {
       st.mode = MODE_RESET;
       st.rsel = 1;

@@ -13,6 +13,7 @@ function items(os) {
     { id: "snake", label: "Snake", value: os.settings.snake_best ? String(os.settings.snake_best) : "" },
     { id: "memory", label: "Pamięć", value: os.settings.memory_best ? String(os.settings.memory_best) : "" },
     { id: "react", label: "Reakcja", value: os.settings.react_best ? String(os.settings.react_best) : "" },
+    { id: "kostka", label: "Kostka", value: "" },
   ];
 }
 
@@ -30,7 +31,13 @@ export const app_games = {
     }
     if (press(ev, BTN_OK)) {
       const it = items(os)[st.sel];
-      if (it) os_launch(it.id);
+      if (!it) return;
+      if (it.id === "kostka") {
+        os.intent = Object.assign({}, os.intent, { tool: "dice" });
+        os_launch("tools");
+        return;
+      }
+      os_launch(it.id);
     }
     if (press(ev, BTN_BACK)) os_pop();
   },

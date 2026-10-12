@@ -38,7 +38,7 @@ const STEPS = [
   },
   {
     title: "Góra",
-    body: "Przesuwa wybór w górę. W Snake też w górę.",
+    body: "Na pulpicie wysuwa alerty. W menu idzie wyżej.",
     footer: "Naciśnij ▲",
     expect: "btn",
     button: BTN_UP,
@@ -112,7 +112,7 @@ const STEPS = [
   },
   {
     title: "Gotowe",
-    body: "Dwie strony ikon. Dół przechodzi na listę, zegar i latarkę.",
+    body: "Sześć ikon na stronie. ▲ przy zegarze wysuwa alerty.",
     footer: "● do menu",
     expect: "ok",
     highlight: BTN_OK,
