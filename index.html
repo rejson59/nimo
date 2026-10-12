@@ -17,7 +17,7 @@
     <header class="intro">
       <p class="eyebrow">ESP32 · SSD1306 · OLED 0.96"</p>
       <h1>nimo</h1>
-      <p class="lede">Poligon firmware, zanim wgrasz kod na układ. Ekran to bufor 128×64 — czarne tło, piksele w odcieniu bieli.</p>
+      <p class="lede">Poligon firmware, zanim wgrasz kod na układ. Szkło ma prawdziwe 0.96 cala — ten sam kawałek ekranu na telefonie i na komputerze. Przyciski są większe, żeby dało się je nacisnąć.</p>
       <ol class="steps">
         <li>Cztery przyciski stoją po prawej ekranu, jeden pod drugim. Na komputerze działają też klawisze.</li>
         <li>Samouczek na OLED prowadzi przez cały system. Długie ◄ pomija go i wychodzi z aplikacji.</li>
@@ -54,7 +54,7 @@
             </div>
             <div class="screen-row">
               <div class="well">
-                <canvas id="oled" width="512" height="256" aria-label="Ekran OLED 128 na 64 piksele"></canvas>
+                <canvas id="oled" width="128" height="64" aria-label="Ekran OLED 128 na 64 piksele, prawdziwe 0.96 cala"></canvas>
                 <div class="glass" aria-hidden="true"></div>
               </div>
               <div class="btn-col" id="btn-col">
@@ -78,7 +78,7 @@
             </div>
             <div class="device-foot">
               <span class="grille" aria-hidden="true"></span>
-              <span class="silk">0.96" OLED · SSD1306</span>
+              <span class="silk">SSD1306</span>
               <span class="silk serial">NMO-0001</span>
             </div>
           </div>

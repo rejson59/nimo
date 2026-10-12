@@ -119,10 +119,16 @@ launch("home", "replace");
 os_frame(t);
 assert(os_top().id === "home", "replaced with home");
 
-// menu wrap: z Czatu w górę ląduje na Ustawieniach
+// z Czatu góra zawija na Alerty, nie na Ustawienia
 press(BTN_UP);
 press(BTN_OK);
-assert(os_top().id === "settings", "up-wrap opens settings, got " + (os_top() && os_top().id));
+assert(os_top().id === "home", "up-wrap stays on home alerts, got " + (os_top() && os_top().id));
+assert(os.ui.hints[3] === "pulpit", "shade is home mode, hints " + (os.ui.hints || []).join("|"));
+dump("07b-shade");
+press(BTN_BACK);
+press(BTN_UP);
+press(BTN_OK);
+assert(os_top().id === "settings", "up from alerts opens settings, got " + (os_top() && os_top().id));
 dump("08-settings");
 
 press(BTN_OK); // contrast edit
@@ -135,8 +141,12 @@ assert(os.settings.sound === 0, "sound toggled off");
 press(BTN_BACK);
 assert(os_top().id === "home", "back from settings");
 
-// chat — po powrocie z ustawień zaznaczenie zostaje na ostatniej pozycji
-press(BTN_DOWN); // zawinięcie na Czat
+// po ustawieniach (sel 2) jeden dół to Alerty, nie Czat
+press(BTN_DOWN);
+press(BTN_OK);
+assert(os_top().id === "home", "one down from settings opens alerts, got " + (os_top() && os_top().id));
+press(BTN_BACK);
+press(BTN_DOWN); // Alerty → Czat
 press(BTN_OK);
 assert(os_top().id === "chat", "open chat, got " + os_top().id);
 dump("10-chat-list");
@@ -227,6 +237,17 @@ assert(os_top().id === "sleep", "asleep, got " + os_top().id);
 dump("24-sleep");
 press(BTN_OK);
 assert(os_top().id === "home", "wake");
+
+os.event_button = -1;
+os.intent = { contact: "hub" };
+launch("chat");
+os_frame(t);
+const hub = os.chat.find((c) => c.id === "hub");
+assert(hub && hub.unread === 0, "alert opens chat and clears unread");
+dump("25-note-chat");
+press(BTN_BACK);
+press(BTN_BACK);
+assert(os_top().id === "home", "back from note chat");
 
 // glyph coverage
 clear_missing();

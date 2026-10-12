@@ -14,13 +14,13 @@
   --plastic-3: #242820;
   --rubber: #1a1d19;
   --well: #050605;
-  --screen-w: 512px;
-  --screen-h: 256px;
-  --btn: 52px;
+  --screen-w: 82.23px;
+  --screen-h: 41.07px;
+  --btn: 44px;
   --btn-gap: 8px;
-  --well-pad: 10px;
-  --head-h: 30px;
-  --foot-h: 28px;
+  --well-pad: 5px;
+  --head-h: 22px;
+  --foot-h: 22px;
   color-scheme: dark;
 }
 
@@ -29,9 +29,7 @@
 html, body {
   margin: 0;
   min-height: 100%;
-  background:
-    radial-gradient(900px 520px at 58% 42%, var(--bg-spot), transparent 70%),
-    var(--bg);
+  background: var(--bg);
   color: var(--ink);
   font-family: Sora, "Segoe UI", sans-serif;
   font-size: 15px;
@@ -64,10 +62,10 @@ body {
 
 h1 {
   margin: 0;
-  font-weight: 600;
-  font-size: 56px;
-  letter-spacing: -0.05em;
-  line-height: 0.9;
+  font-weight: 500;
+  font-size: 32px;
+  letter-spacing: -0.04em;
+  line-height: 1;
 }
 
 .lede {
@@ -176,15 +174,11 @@ summary:focus-visible {
 
 .fixture {
   position: relative;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 28%),
-    var(--plate);
+  background: var(--plate);
   border: 1px solid var(--plate-edge);
-  border-radius: 28px;
-  padding: 16px 18px 12px;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.04) inset,
-    0 28px 60px rgba(0, 0, 0, 0.38);
+  border-radius: 16px;
+  padding: 14px 16px 12px;
+  box-shadow: none;
 }
 
 .fixture-top,
@@ -224,42 +218,13 @@ summary:focus-visible {
 .plastic {
   position: relative;
   flex: 0 0 auto;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 22%),
-    linear-gradient(165deg, var(--plastic-1), var(--plastic-2) 42%, var(--plastic-3));
-  border-radius: 26px;
-  padding: 8px 12px 8px;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.22) inset,
-    0 -2px 0 rgba(0, 0, 0, 0.28) inset,
-    0 16px 28px rgba(0, 0, 0, 0.28);
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
 }
 
-.screw {
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 35% 35%, #8d9288, #2a2d28 62%, #121411);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45);
-  z-index: 2;
-}
-
-.screw::after {
-  content: "";
-  position: absolute;
-  left: 1px;
-  right: 1px;
-  top: 3px;
-  height: 1px;
-  background: rgba(0, 0, 0, 0.55);
-}
-
-.screw.tl { top: 7px; left: 8px; }
-.screw.tr { top: 7px; right: 8px; }
-.screw.bl { bottom: 7px; left: 8px; }
-.screw.br { bottom: 7px; right: 8px; }
+.screw { display: none; }
 
 .device-head,
 .probe-spacer {
@@ -284,8 +249,8 @@ summary:focus-visible {
 }
 
 .led.on {
-  background: #f0b429;
-  box-shadow: 0 0 8px var(--amber), 0 0 1px #fff6;
+  background: #c9a15a;
+  box-shadow: none;
 }
 
 .led.asleep {
@@ -299,20 +264,25 @@ summary:focus-visible {
 
 .screen-row {
   display: flex;
-  align-items: stretch;
+  align-items: flex-start;
+  flex-wrap: nowrap;
   gap: 12px;
-  height: calc(var(--screen-h) + var(--well-pad) * 2);
+  height: auto;
+}
+
+.well,
+.btn-col,
+.hw {
+  flex-shrink: 0;
 }
 
 .well {
   position: relative;
+  flex: 0 0 auto;
   background: var(--well);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: var(--well-pad);
-  box-shadow:
-    0 0 0 1px #000,
-    inset 0 0 0 1px #1a1c18,
-    inset 0 10px 18px rgba(0, 0, 0, 0.72);
+  box-shadow: 0 0 0 1px #1c1e18;
 }
 
 canvas {
@@ -333,10 +303,11 @@ canvas {
 
 .btn-col,
 .probes {
-  height: calc(var(--screen-h) + var(--well-pad) * 2);
+  height: auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: var(--btn-gap);
 }
 
 .btn-col { width: var(--btn); }
@@ -345,19 +316,14 @@ canvas {
   position: relative;
   width: var(--btn);
   height: var(--btn);
-  border: 0;
+  border: 1px solid #2a2d28;
   border-radius: 50%;
   padding: 0;
   cursor: pointer;
-  color: #e7e1d6;
-  background:
-    radial-gradient(circle at 50% 30%, #63685e 0%, #2c302b 52%, #141714 100%);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.22) inset,
-    0 -6px 10px rgba(0, 0, 0, 0.28) inset,
-    0 4px 0 #0c0e0c,
-    0 7px 12px rgba(0, 0, 0, 0.35);
-  transition: transform 70ms ease, box-shadow 70ms ease, color 70ms ease;
+  color: #d9d3c8;
+  background: #23261f;
+  box-shadow: none;
+  transition: transform 70ms ease, background 70ms ease, color 70ms ease;
   touch-action: none;
   user-select: none;
 }
@@ -370,12 +336,9 @@ canvas {
 }
 
 .hw.is-down {
-  transform: translateY(3px);
+  transform: translateY(1px);
   color: #f0d7a4;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.08) inset,
-    0 3px 6px rgba(0, 0, 0, 0.45) inset,
-    0 1px 0 #0c0e0c;
+  background: #1a1c17;
 }
 
 .hw.is-hot {
@@ -383,8 +346,8 @@ canvas {
 }
 
 @keyframes hot {
-  0%, 100% { box-shadow: 0 1px 0 rgba(255, 255, 255, 0.22) inset, 0 4px 0 #0c0e0c, 0 0 0 0 rgba(227, 163, 58, 0); }
-  50% { box-shadow: 0 1px 0 rgba(255, 255, 255, 0.22) inset, 0 4px 0 #0c0e0c, 0 0 0 6px rgba(227, 163, 58, 0.32); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(227, 163, 58, 0); }
+  50% { box-shadow: 0 0 0 3px rgba(227, 163, 58, 0.45); }
 }
 
 .hw.is-down.is-hot { animation: none; }
@@ -402,13 +365,7 @@ canvas {
 
 .hw.is-hold .ring { opacity: 1; }
 
-.grille {
-  width: 42px;
-  height: 12px;
-  background-image: radial-gradient(#0c0d0b 1.1px, transparent 1.3px);
-  background-size: 5px 5px;
-  opacity: 0.85;
-}
+.grille { display: none; }
 
 .probe-col {
   display: flex;
@@ -417,13 +374,13 @@ canvas {
   flex: 1 1 160px;
 }
 
-.probe-spacer {
+.probe-spacer,
+.probe-spacer.bot {
   display: flex;
   align-items: flex-end;
-  padding: 0 0 6px 22px;
+  height: auto;
+  padding: 0 0 8px;
 }
-
-.probe-spacer.bot { padding: 0; }
 
 .probe {
   display: flex;

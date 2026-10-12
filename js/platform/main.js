@@ -52,33 +52,66 @@ input_bind((ev) => {
 buttons.forEach((el) => input_attach_button(el, Number(el.dataset.btn)));
 input_attach_keys(() => (os.ui && os.ui.text_entry) || false);
 
-let scale = 4;
+/** Aktywny obszar 0.96" 128×64, nie przekątna z ramką modułu. */
+const GLASS_W_MM = 21.744;
+const GLASS_H_MM = 10.864;
+
+let scale = 1;
+let glass = { w: 82.23, h: 41.07 };
 let frames = 0;
 let fpsStamp = performance.now();
 let fps = 0;
 
-function pickScale() {
-  const stage = document.querySelector(".stage");
-  const availW = (stage ? stage.clientWidth : window.innerWidth) - 8;
-  const availH = window.innerHeight - (window.innerWidth < 960 ? 210 : 36);
-  const extraW = 250;
-  const extraH = 150;
-  let s = 6;
-  while (s > 2 && (128 * s + extraW > availW || 64 * s + extraH > availH)) s--;
-  return s;
+function cssPxPerMm() {
+  const probe = document.createElement("div");
+  probe.style.cssText = "position:absolute;left:-1200px;top:0;width:100mm;height:1px;visibility:hidden;pointer-events:none";
+  document.body.appendChild(probe);
+  const px = probe.getBoundingClientRect().width / 100;
+  probe.remove();
+  return px > 0.5 ? px : 96 / 25.4;
+}
+
+/**
+ * CSS `mm` na telefonie to fikcja 96 px/cal. iOS liczymy jako 163 CSS px/cal
+ * (także iPad udający Maca), Android jako 160. Desktop: zmierzony mm.
+ * Pinch-zoom korygujemy tylko na ścieżce mobilnej.
+ */
+function glassCssPx() {
+  const ua = navigator.userAgent || "";
+  const touch = navigator.maxTouchPoints > 0;
+  const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && touch);
+  const android = /Android/i.test(ua);
+  const mobile = ios || android;
+  const pxPerMm = ios ? 163 / 25.4 : android ? 160 / 25.4 : cssPxPerMm();
+  const vv = window.visualViewport;
+  const zoom = mobile && vv && vv.scale > 0 ? vv.scale : 1;
+  return {
+    w: (GLASS_W_MM * pxPerMm) / zoom,
+    h: (GLASS_H_MM * pxPerMm) / zoom,
+  };
+}
+
+function backingFor(cssW) {
+  const dpr = window.devicePixelRatio || 1;
+  let k = Math.ceil((cssW * dpr) / 128 - 1e-6);
+  if (k < 1) k = 1;
+  if (k > 4) k = 4;
+  return k;
 }
 
 function applyScale() {
-  scale = pickScale();
-  const screenH = 64 * scale;
-  const colH = screenH + 20;
-  const gap = scale >= 5 ? 10 : 8;
-  const btn = Math.max(40, Math.min(72, Math.floor((colH - 3 * gap) / 4)));
+  glass = glassCssPx();
+  scale = backingFor(glass.w);
   const root = document.documentElement;
-  root.style.setProperty("--screen-w", 128 * scale + "px");
-  root.style.setProperty("--screen-h", screenH + "px");
-  root.style.setProperty("--btn", btn + "px");
-  root.style.setProperty("--btn-gap", gap + "px");
+  root.style.setProperty("--screen-w", glass.w.toFixed(2) + "px");
+  root.style.setProperty("--screen-h", glass.h.toFixed(2) + "px");
+  root.style.setProperty("--btn", "44px");
+  root.style.setProperty("--btn-gap", "8px");
+  const read = document.getElementById("size-readout");
+  if (read) {
+    read.textContent = "0.96\" · " + GLASS_W_MM.toFixed(1) + " × " + GLASS_H_MM.toFixed(1)
+      + " mm · " + Math.round(glass.w) + " × " + Math.round(glass.h) + " px";
+  }
 }
 
 function sync(now) {
@@ -147,7 +180,7 @@ function frame(now) {
   os.minute = clock.getMinutes();
   input_pump(now);
   os_frame(now);
-  present(canvas, os.display, os.settings, scale);
+  present(canvas, os.display, os.settings, scale, glass);
   frames++;
   if (now - fpsStamp >= 500) {
     fps = Math.round((frames * 1000) / (now - fpsStamp));
@@ -160,6 +193,10 @@ function frame(now) {
 
 applyScale();
 window.addEventListener("resize", applyScale);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", applyScale);
+  window.visualViewport.addEventListener("scroll", applyScale);
+}
 let fitted = 0;
 
 document.getElementById("btn-tutorial")?.addEventListener("click", () => {

@@ -111,7 +111,7 @@ const STEPS = [
   },
   {
     title: "Gotowe",
-    body: "Menu: Czat, Gierki, Ustawienia. Miłego poligonu.",
+    body: "Pulpit z ikonami: Czat, Gierki, Ustawienia i Alerty.",
     footer: "● do menu",
     expect: "ok",
     highlight: BTN_OK,

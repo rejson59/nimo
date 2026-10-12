@@ -60,6 +60,7 @@ export function os_init(platform) {
   os.mute_button = -1;
   os.log = [];
   os.ui = empty_ui();
+  os.intent = null;
 }
 
 export function os_top() {

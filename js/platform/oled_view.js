@@ -24,15 +24,18 @@ function lit_color(mode, y, contrast) {
   ];
 }
 
-export function present(canvas, display, settings, scale) {
-  const w = 128 * scale;
-  const h = 64 * scale;
+export function present(canvas, display, settings, scale, box) {
+  const sc = Math.max(1, scale | 0);
+  const w = 128 * sc;
+  const h = 64 * sc;
   if (canvas.width !== w || canvas.height !== h) {
     canvas.width = w;
     canvas.height = h;
   }
-  canvas.style.width = w + "px";
-  canvas.style.height = h + "px";
+  const cssW = box && box.w ? box.w : w;
+  const cssH = box && box.h ? box.h : h;
+  canvas.style.width = cssW + "px";
+  canvas.style.height = cssH + "px";
   if (!image || imageScale !== scale) {
     image = new ImageData(w, h);
     imageScale = scale;

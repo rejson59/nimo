@@ -27,7 +27,7 @@ Piny są w `nimo_config.h`.
 
 ## Co już działa na płytce
 
-Menu główne (Czat, Gierki, Ustawienia), pytanie o uśpienie i stos ekranów. Wejście w Czat / Gierki / Ustawienia pokazuje, który plik JS przepisać. Samouczek, czat, Snake i Pamięć są w symulatorze — przenieś je, gdy menu na prawdziwym OLED wygląda tak samo.
+Menu główne, pytanie o uśpienie i stos ekranów. W symulatorze pulpit to siatka ikon (Czat, Gierki, Ustawienia, Alerty); ten szkic ma jeszcze listę tekstową trzech pozycji. Wejście w Czat / Gierki / Ustawienia pokazuje, który plik JS przepisać. Samouczek, czat, Snake, Pamięć i panel alertów są w symulatorze — przenieś je, gdy menu na prawdziwym OLED wygląda tak samo.
 
 ## Jak przepisywać aplikację
 

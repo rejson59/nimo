@@ -134,9 +134,20 @@ function thread_lines(c) {
 
 export const app_chat = {
   id: "chat",
-  on_enter() {
+  on_enter(os) {
     st.mode = "list";
     st.replyAt = 0;
+    const want = os.intent && os.intent.contact;
+    if (os.intent) os.intent = null;
+    if (!want) return;
+    const i = os.chat.findIndex((c) => c.id === want);
+    if (i < 0) return;
+    st.sel = i;
+    st.contact = i;
+    st.mode = "thread";
+    st.stick = true;
+    os.chat[i].unread = 0;
+    os_persist();
   },
   on_exit() {},
   on_resume() {},

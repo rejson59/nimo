@@ -2,7 +2,7 @@
 
 Symulator miniaturowego urządzenia: ESP32 i OLED 0.96" (128×64). Poligon firmware, zanim kod trafi na układ.
 
-Ekran w przeglądarce to ten sam bufor 1-bit, który na płytce pójdzie do SSD1306. Logika menu nie zna DOM, canvasu ani `localStorage`.
+Ekran w przeglądarce to ten sam bufor 1-bit, który na płytce pójdzie do SSD1306. Szkło jest w skali 1:1 (aktywny obszar 21.7 × 10.9 mm) — nie rośnie z oknem. Logika menu nie zna DOM, canvasu ani `localStorage`.
 
 ## Uruchomienie
 
