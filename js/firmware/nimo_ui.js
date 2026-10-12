@@ -6,9 +6,11 @@
 import { theme_mark } from "./nimo_theme.js";
 import {
   display_fill_rect,
+  display_fill_round,
   display_hline,
   display_pixel,
   display_rect,
+  display_round,
   display_text,
   display_vline,
   text_width,
@@ -69,11 +71,11 @@ export function ui_header(d, os, title, opts = {}) {
     const ts = clock_str(os);
     display_text(d, 116 - text_width(ts), 0, ts, 1);
   }
-  display_hline(d, 0, 8, 128, 1);
+  display_hline(d, 2, 8, 124, 1);
 }
 
 export function ui_footer(d, hint) {
-  display_hline(d, 0, 55, 128, 1);
+  display_hline(d, 2, 55, 124, 1);
   display_text(d, 1, 57, trunc(hint, 21), 1);
 }
 
@@ -110,9 +112,9 @@ export function menu_draw(d, menu, x, y, w, h, itemH) {
     const on = idx === menu.sel;
     const frame = theme_mark() === 1;
     let col = 1;
-    if (on && frame) display_rect(d, x, iy, innerW, itemH - 1, 1);
+    if (on && frame) display_round(d, x, iy, innerW, itemH - 1, 1);
     else if (on) {
-      display_fill_rect(d, x, iy, innerW, itemH - 1, 1);
+      display_fill_round(d, x, iy, innerW, itemH - 1, 1);
       col = 0;
     }
     const ty = iy + Math.max(0, Math.floor((itemH - 8) / 2));
@@ -145,14 +147,14 @@ export function dialog_draw(d, title, options, sel) {
   const x = Math.floor((128 - w) / 2);
   const y = Math.floor((64 - h) / 2);
   display_fill_rect(d, 0, 9, 128, 55, 0);
-  display_rect(d, x, y, w, h, 1);
+  display_round(d, x, y, w, h, 1);
   display_text(d, x + 5, y + 3, trunc(title, 16), 1);
   for (let i = 0; i < options.length; i++) {
     const iy = y + 14 + i * 12;
     const on = i === sel;
     const frame = theme_mark() === 1;
-    if (on && frame) display_rect(d, x + 4, iy - 1, w - 8, 10, 1);
-    else if (on) display_fill_rect(d, x + 4, iy - 1, w - 8, 10, 1);
+    if (on && frame) display_round(d, x + 4, iy - 1, w - 8, 10, 1);
+    else if (on) display_fill_round(d, x + 4, iy - 1, w - 8, 10, 1);
     display_text(d, x + 7, iy, options[i], on && !frame ? 0 : 1);
   }
 }

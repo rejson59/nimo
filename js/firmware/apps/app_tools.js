@@ -6,7 +6,7 @@
 import { BTN_BACK, BTN_OK, BTN_UP } from "../nimo_config.js";
 import {
   display_fill_rect,
-  display_rect,
+  display_round,
   display_text,
   display_text_center,
   display_text_x2,
@@ -216,7 +216,7 @@ function draw_done(os, d) {
 function draw_face(d, face) {
   const x = 48;
   const y = 14;
-  display_rect(d, x, y, 32, 32, 1);
+  display_round(d, x, y, 32, 32, 1);
   const map = {
     1: [[1, 1]],
     2: [[0, 0], [2, 2]],

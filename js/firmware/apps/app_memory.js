@@ -4,7 +4,7 @@
  */
 
 import { BTN_BACK, BTN_OK, BEEP_DIE, BEEP_M0, BEEP_OK, EV_PRESS } from "../nimo_config.js";
-import { display_fill_rect, display_rect, display_text, text_width } from "../nimo_display.js";
+import { display_fill_round, display_round, display_text, text_width } from "../nimo_display.js";
 import { press } from "../nimo_input.js";
 import { rand_int, rand_seed } from "../nimo_rand.js";
 import { os_persist, os_pop } from "../nimo_os.js";
@@ -148,8 +148,8 @@ export const app_memory = {
     for (let i = 0; i < 4; i++) {
       const p = PADS[i];
       const on = lit === i;
-      if (on) display_fill_rect(d, p.x, p.y, 58, 18, 1);
-      else display_rect(d, p.x, p.y, 58, 18, 1);
+      if (on) display_fill_round(d, p.x, p.y, 58, 18, 1);
+      else display_round(d, p.x, p.y, 58, 18, 1);
       const col = on ? 0 : 1;
       const lw = text_width(p.label);
       display_text(d, p.x + Math.floor((58 - lw) / 2), p.y + 5, p.label, col);

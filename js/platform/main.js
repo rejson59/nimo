@@ -96,7 +96,7 @@ function glassCssPx() {
   const h = (GLASS_H_MM * pxPerMm) / zoom;
   if (phone) return { w, h, zoom: 1, life: true };
   const wdw = window.innerWidth || 1200;
-  const side = wdw < 1100 ? 92 : 300;
+  const side = 200;
   const availW = Math.max(200, wdw - side - 24);
   const availH = Math.max(140, window.innerHeight - 96);
   let s = Math.floor(Math.min(availW / 128, availH / 64, 8));
@@ -130,9 +130,7 @@ function applyScale() {
   root.style.setProperty("--btn-gap", "8px");
   const read = document.getElementById("size-readout");
   if (read) {
-    read.textContent = glass.life
-      ? "0.96\" · " + GLASS_W_MM.toFixed(1) + " × " + GLASS_H_MM.toFixed(1) + " mm"
-      : "0.96\" · na komputerze " + glass.zoom + "×";
+    read.textContent = glass.life ? "0.96\"" : glass.zoom + "×";
   }
 }
 

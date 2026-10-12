@@ -4,7 +4,7 @@
  */
 
 import { BTN_BACK, BTN_OK, BEEP_ERR, BEEP_OK, COLOR_NAME, CONTRAST_STEPS } from "../nimo_config.js";
-import { display_fill_rect, display_rect, display_text, display_text_center } from "../nimo_display.js";
+import { display_fill_rect, display_fill_round, display_rect, display_round, display_text, display_text_center } from "../nimo_display.js";
 import { nav_delta, press } from "../nimo_input.js";
 import { os_factory_reset, os_launch, os_persist, os_pop } from "../nimo_os.js";
 import { THEMES, theme_apply, theme_of } from "../nimo_theme.js";
@@ -67,10 +67,10 @@ function draw_theme(os, d) {
   const y = 36;
   const w = 80;
   if (t.mark) {
-    display_rect(d, x, y, w, 11, 1);
+    display_round(d, x, y, w, 11, 1);
     display_text(d, x + 16, y + 2, "wybór", 1);
   } else {
-    display_fill_rect(d, x, y, w, 11, 1);
+    display_fill_round(d, x, y, w, 11, 1);
     display_text(d, x + 16, y + 2, "wybór", 0);
   }
   ui_footer(d, "▲▼ próbuj   ● zostaw");

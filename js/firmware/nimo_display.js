@@ -55,6 +55,28 @@ export function display_rect(d, x, y, w, h, c) {
   display_vline(d, x + w - 1, y, h, c);
 }
 
+/** Róg ścięty o 1 piksel. Na 128×64 to całe „zaokrąglenie”, jakie szkło uniesie. */
+export function display_fill_round(d, x, y, w, h, c) {
+  if (w < 3 || h < 3) {
+    display_fill_rect(d, x, y, w, h, c);
+    return;
+  }
+  display_fill_rect(d, x + 1, y, w - 2, h, c);
+  display_vline(d, x, y + 1, h - 2, c);
+  display_vline(d, x + w - 1, y + 1, h - 2, c);
+}
+
+export function display_round(d, x, y, w, h, c) {
+  if (w < 3 || h < 3) {
+    display_rect(d, x, y, w, h, c);
+    return;
+  }
+  display_hline(d, x + 1, y, w - 2, c);
+  display_hline(d, x + 1, y + h - 1, w - 2, c);
+  display_vline(d, x, y + 1, h - 2, c);
+  display_vline(d, x + w - 1, y + 1, h - 2, c);
+}
+
 export function display_hline(d, x, y, w, c) {
   for (let i = 0; i < w; i++) display_pixel(d, x + i, y, c);
 }

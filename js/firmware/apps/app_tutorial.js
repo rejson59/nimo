@@ -6,7 +6,7 @@
  */
 
 import { BTN_BACK, BTN_DOWN, BTN_OK, BTN_UP, BEEP_ERR } from "../nimo_config.js";
-import { display_fill_rect, display_pixel, display_rect, display_text } from "../nimo_display.js";
+import { display_fill_rect, display_fill_round, display_pixel, display_round, display_text } from "../nimo_display.js";
 import { long, nav_delta, press } from "../nimo_input.js";
 import { os_launch, os_persist, os_pop } from "../nimo_os.js";
 import {
@@ -266,14 +266,14 @@ export const app_tutorial = {
 
 function draw_warn(d, os) {
   display_fill_rect(d, 0, 0, 128, 64, 0);
-  display_rect(d, 6, 4, 116, 56, 1);
+  display_round(d, 6, 4, 116, 56, 1);
   display_text(d, 14, 10, "Pominąć kurs?", 1);
   display_text(d, 14, 22, "Nie poznasz", 1);
   display_text(d, 14, 30, "przycisków.", 1);
   const opts = ["Pomiń", "Zostań"];
   for (let i = 0; i < 2; i++) {
     const x = 16 + i * 52;
-    if (i === st.wsel) display_fill_rect(d, x - 3, 42, 46, 11, 1);
+    if (i === st.wsel) display_fill_round(d, x - 3, 42, 46, 11, 1);
     display_text(d, x, 44, opts[i], i === st.wsel ? 0 : 1);
   }
   ui_set(os, ["wybór", "wybór", "zatwierdź", "zostań"], -1);

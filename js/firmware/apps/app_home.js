@@ -5,7 +5,7 @@
  */
 
 import { BTN_BACK, BTN_OK } from "../nimo_config.js";
-import { display_fill_rect, display_pixel, display_rect, display_text, display_text_center, text_width } from "../nimo_display.js";
+import { display_fill_rect, display_fill_round, display_pixel, display_round, display_text, display_text_center, text_width } from "../nimo_display.js";
 import { nav_delta, press } from "../nimo_input.js";
 import { notes_collect } from "../nimo_notes.js";
 import { os_launch } from "../nimo_os.js";
@@ -192,8 +192,8 @@ function draw_grid(os, d) {
     const idx = start + i;
     const on = idx === st.sel && st.mode === MODE_GRID;
     const frame = theme_mark() === 1;
-    if (on && frame) display_rect(d, slot.x - 2, slot.y - 2, 20, 20, 1);
-    else if (on) display_fill_rect(d, slot.x - 2, slot.y - 2, 20, 20, 1);
+    if (on && frame) display_round(d, slot.x - 2, slot.y - 2, 20, 20, 1);
+    else if (on) display_fill_round(d, slot.x - 2, slot.y - 2, 20, 20, 1);
     draw_icon(d, APPS[idx].icon, slot.x, slot.y, on && !frame ? 0 : 1);
     const badge = APPS[idx].id === "chat"
       ? notes.some((n) => n.app === "chat")

@@ -4,7 +4,7 @@
  */
 
 import { BTN_BACK, BTN_OK, BEEP_ERR, BEEP_OK, EV_CHAR } from "../nimo_config.js";
-import { display_fill_rect, display_rect, display_text, display_text_center } from "../nimo_display.js";
+import { display_fill_rect, display_round, display_text, display_text_center } from "../nimo_display.js";
 import { long, nav_delta, press, tap } from "../nimo_input.js";
 import { os_persist, os_pop } from "../nimo_os.js";
 import { menu_draw, menu_move, trunc, ui_footer, ui_header, ui_set } from "../nimo_ui.js";
@@ -26,7 +26,7 @@ function chars() {
 
 function box_icon(done) {
   return (d, x, y, c) => {
-    display_rect(d, x, y + 1, 7, 7, c);
+    display_round(d, x, y + 1, 7, 7, c);
     if (done) display_fill_rect(d, x + 2, y + 3, 3, 3, c);
   };
 }

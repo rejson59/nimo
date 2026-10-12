@@ -12,12 +12,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/sim.css?v=panel1" />
+  <link rel="stylesheet" href="css/sim.css?v=round1" />
   <style>
     #oled {
       width: var(--oled-w, 640px) !important;
       height: var(--oled-h, 320px) !important;
       max-width: none !important;
+      border-radius: 10px !important;
     }
     .btn-col { width: var(--oled-btn, 56px) !important; }
     .hw {
@@ -57,153 +58,69 @@
   </script>
 </head>
 <body>
-  <div class="page">
-    <header class="intro">
-      <p class="eyebrow">ESP32 · SSD1306 · OLED 0.96"</p>
-      <h1>nimo</h1>
-      <p class="lede">Poligon firmware, zanim wgrasz kod na układ. Na telefonie szkło ma prawdziwe 0.96 cala. Na komputerze jest powiększone, żeby dało się czytać piksele.</p>
-      <ol class="steps">
-        <li>Cztery przyciski stoją po prawej ekranu, jeden pod drugim. Na komputerze działają też klawisze.</li>
-        <li>Samouczek prowadzi przez przyciski. ◄ na pierwszym ekranie pyta, zanim pominie. Potem wrócisz do niego z Ustawień.</li>
-        <li>W Ustawieniach, pozycja Wygląd, przełączasz jeden z pięciu zestawów. Ten moduł jest biały albo niebieski — żółty i pasek Y/B to inne szkła.</li>
-        <li>Narzędzia, Sterownik: przewijanie, zanikanie, mruganie, cały panel i obrót. To komendy układu, nie nowy kolor.</li>
-      </ol>
-      <ul class="keys">
-        <li><span class="sym">▲</span> <kbd>↑</kbd> wyżej · w Snake góra</li>
-        <li><span class="sym">▼</span> <kbd>↓</kbd> niżej · w Snake dół</li>
-        <li><span class="sym">●</span> <kbd>Enter</kbd> zatwierdź · w Snake prawo</li>
-        <li><span class="sym">◄</span> <kbd>Esc</kbd> wstecz · w Snake lewo</li>
-      </ul>
-      <div class="actions">
-        <button type="button" class="textbtn" id="btn-tutorial">Samouczek</button>
-        <button type="button" class="textbtn" id="btn-skip">Pomiń samouczek</button>
-        <button type="button" class="textbtn" id="btn-shot">Zrzut OLED</button>
-      </div>
-    </header>
-
+  <main class="page">
     <div class="stage">
       <div class="fixture">
-        <div class="fixture-top">
-          <span class="silk">Poligon 01</span>
-          <span class="silk" id="size-readout">0.96" · na komputerze 4×</span>
+        <div class="bar">
+          <span class="led" id="led"></span>
+          <span class="brand">nimo</span>
+          <span class="pill" id="app-pill">boot</span>
+          <span class="silk" id="size-readout">4×</span>
         </div>
         <div class="rig">
-          <div class="plastic">
-            <span class="screw tl" aria-hidden="true"></span>
-            <span class="screw tr" aria-hidden="true"></span>
-            <span class="screw bl" aria-hidden="true"></span>
-            <span class="screw br" aria-hidden="true"></span>
-            <div class="device-head">
-              <span class="led" id="led"></span>
-              <span class="silk brand">nimo</span>
-              <span class="silk dim">ESP32-WROOM</span>
-            </div>
-            <div class="screen-row">
-              <div class="well">
-                <canvas id="oled" width="128" height="64" aria-label="Ekran OLED 128 na 64 piksele, prawdziwe 0.96 cala"></canvas>
-                <div class="glass" aria-hidden="true"></div>
-              </div>
-              <div class="btn-col" id="btn-col">
-                <button type="button" class="hw" data-btn="0" data-fallback="Góra" aria-label="Góra">
-                  <span class="ring"></span>
-                  <span class="glyph">▲</span>
-                </button>
-                <button type="button" class="hw" data-btn="1" data-fallback="Dół" aria-label="Dół">
-                  <span class="ring"></span>
-                  <span class="glyph">▼</span>
-                </button>
-                <button type="button" class="hw" data-btn="2" data-fallback="OK" aria-label="OK">
-                  <span class="ring"></span>
-                  <span class="glyph">●</span>
-                </button>
-                <button type="button" class="hw" data-btn="3" data-fallback="Wstecz" aria-label="Wstecz">
-                  <span class="ring"></span>
-                  <span class="glyph">◄</span>
-                </button>
-              </div>
-            </div>
-            <div class="device-foot">
-              <span class="grille" aria-hidden="true"></span>
-              <span class="silk">SSD1306/15</span>
-              <span class="silk serial">NMO-0001</span>
-            </div>
+          <div class="well">
+            <canvas id="oled" width="128" height="64" aria-label="Ekran OLED 128 na 64"></canvas>
+            <div class="glass" aria-hidden="true"></div>
           </div>
-          <div class="probe-col">
-            <div class="probe-spacer"><span class="silk">teraz</span></div>
-            <div class="probes" id="probes">
-              <div class="probe" data-i="0">
-                <span class="probe-line"></span>
-                <div class="probe-copy">
-                  <div class="probe-main"><span class="k">▲</span> <span class="t">wyżej</span></div>
-                  <div class="probe-meta"><kbd>↑</kbd> <span class="s" hidden></span></div>
-                </div>
-              </div>
-              <div class="probe" data-i="1">
-                <span class="probe-line"></span>
-                <div class="probe-copy">
-                  <div class="probe-main"><span class="k">▼</span> <span class="t">niżej</span></div>
-                  <div class="probe-meta"><kbd>↓</kbd> <span class="s" hidden></span></div>
-                </div>
-              </div>
-              <div class="probe" data-i="2">
-                <span class="probe-line"></span>
-                <div class="probe-copy">
-                  <div class="probe-main"><span class="k">●</span> <span class="t">OK</span></div>
-                  <div class="probe-meta"><kbd>Enter</kbd> <span class="s" hidden></span></div>
-                </div>
-              </div>
-              <div class="probe" data-i="3">
-                <span class="probe-line"></span>
-                <div class="probe-copy">
-                  <div class="probe-main"><span class="k">◄</span> <span class="t">wstecz</span></div>
-                  <div class="probe-meta"><kbd>Esc</kbd> <span class="s" hidden></span></div>
-                </div>
-              </div>
-            </div>
-            <div class="probe-spacer bot"></div>
+          <div class="btn-col" id="btn-col">
+            <button type="button" class="hw" data-btn="0" aria-label="Góra"><span class="ring"></span><span class="glyph">▲</span></button>
+            <button type="button" class="hw" data-btn="1" aria-label="Dół"><span class="ring"></span><span class="glyph">▼</span></button>
+            <button type="button" class="hw" data-btn="2" aria-label="OK"><span class="ring"></span><span class="glyph">●</span></button>
+            <button type="button" class="hw" data-btn="3" aria-label="Wstecz"><span class="ring"></span><span class="glyph">◄</span></button>
+          </div>
+          <div class="probes" id="probes">
+            <div class="probe" data-i="0"><span class="k">▲</span><span class="t">wyżej</span><kbd>↑</kbd><span class="s" hidden></span></div>
+            <div class="probe" data-i="1"><span class="k">▼</span><span class="t">niżej</span><kbd>↓</kbd><span class="s" hidden></span></div>
+            <div class="probe" data-i="2"><span class="k">●</span><span class="t">OK</span><kbd>Enter</kbd><span class="s" hidden></span></div>
+            <div class="probe" data-i="3"><span class="k">◄</span><span class="t">wstecz</span><kbd>Esc</kbd><span class="s" hidden></span></div>
           </div>
         </div>
-        <p class="type-note" id="type-note" hidden>Pisanie: litery z klawiatury wchodzą od razu. Enter wstawia znak z siatki, przytrzymaj Enter albo Shift+Enter, aby wysłać.</p>
-        <div class="fixture-bot">
-          <span class="silk">I2C 0x3C · 3.3 V · 4 piny</span>
-          <span class="pill" id="app-pill">boot</span>
+        <p class="type-note" id="type-note" hidden>Litery z klawiatury.</p>
+        <div class="actions">
+          <button type="button" class="textbtn" id="btn-tutorial">Samouczek</button>
+          <button type="button" class="textbtn" id="btn-skip">Pomiń</button>
+          <button type="button" class="textbtn" id="btn-shot">Zrzut</button>
+          <details class="poligon" id="poligon">
+            <summary>Piny</summary>
+            <div class="poligon-grid">
+              <section>
+                <dl>
+                  <div><dt>Stos</dt><dd id="pol-stack">—</dd></div>
+                  <div><dt>Zdarzenie</dt><dd id="pol-last">—</dd></div>
+                  <div><dt>Uptime</dt><dd id="pol-up">00:00:00</dd></div>
+                  <div><dt>Klatki</dt><dd id="pol-fps">—</dd></div>
+                </dl>
+              </section>
+              <section>
+                <ol id="pol-log"></ol>
+              </section>
+              <section>
+                <ul class="pins">
+                  <li><span>▲</span> 32</li>
+                  <li><span>▼</span> 33</li>
+                  <li><span>●</span> 25</li>
+                  <li><span>◄</span> 26</li>
+                  <li><span>I2C</span> 21 · 22 · 0x3C</li>
+                </ul>
+                <button type="button" class="textbtn" id="btn-reset">NVS</button>
+              </section>
+            </div>
+          </details>
         </div>
       </div>
-
-      <details class="poligon" id="poligon">
-        <summary>Poligon — stos, log, piny</summary>
-        <div class="poligon-grid">
-          <section>
-            <h2>Stan</h2>
-            <dl>
-              <div><dt>Stos</dt><dd id="pol-stack">—</dd></div>
-              <div><dt>Zdarzenie</dt><dd id="pol-last">—</dd></div>
-              <div><dt>Uptime</dt><dd id="pol-up">00:00:00</dd></div>
-              <div><dt>Klatki</dt><dd id="pol-fps">—</dd></div>
-            </dl>
-          </section>
-          <section>
-            <h2>Log</h2>
-            <ol id="pol-log"></ol>
-          </section>
-          <section>
-            <h2>Piny pod Arduino</h2>
-            <ul class="pins">
-              <li><span>▲</span> GPIO 32 · INPUT_PULLUP</li>
-              <li><span>▼</span> GPIO 33 · INPUT_PULLUP</li>
-              <li><span>●</span> GPIO 25 · INPUT_PULLUP</li>
-              <li><span>◄</span> GPIO 26 · INPUT_PULLUP</li>
-              <li><span>I2C</span> SDA 21 · SCL 22 · 0x3C</li>
-              <li><span>VCC</span> 3.3 V · GND · bez RST</li>
-            </ul>
-            <button type="button" class="textbtn" id="btn-reset">Wyczyść NVS</button>
-          </section>
-        </div>
-      </details>
-      <p class="fine">Ustawienia i czat zostają w tej przeglądarce — tak jak NVS na ESP32. Nic nie jest wgrywane na układ.</p>
     </div>
-  </div>
-  <noscript>Symulator potrzebuje JavaScript — firmware liczy się w przeglądarce, zanim trafi na ESP32.</noscript>
-  <script type="module" src="js/platform/main.js?v=desk3"></script>
+  </main>
+  <noscript>Potrzebny JavaScript.</noscript>
+  <script type="module" src="js/platform/main.js?v=round1"></script>
 </body>
 </html>
